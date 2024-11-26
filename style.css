@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&display=swap');
 
 :root {
     /* Colors */
@@ -20,7 +20,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
+    font-family: "Parkinsans", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-weight: 400;
 }
 
 body {
@@ -225,6 +228,25 @@ body {
     flex-direction: row;
 }
 
+/* Grid */
+
+.grid {
+    display: grid;
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, 1fr);
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Fontes */
 .fnt-title {
     font-size: 3rem;
     transform: translateY(-20px);
@@ -407,10 +429,6 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-.container {
-    gap: 1rem;
-}
-
 .card {
     transition: var(--transition);
     box-shadow: var(--shadow-sm);
@@ -443,4 +461,51 @@ body {
 .card-secondary {
     background-color: var(--secondary-color);
     color: var(--text-color-secondary);
+}
+
+
+/* Boards */
+
+.board {
+    cursor: pointer;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition);
+    border-left: 2px solid;
+}
+
+
+.board:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.board-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.board-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    z-index: 100;
+}
+
+.dropdown:hover .dropdown-content {
+    display: flex;
 }
