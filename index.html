@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskEasy</title>
     <link rel="stylesheet" href="style.css">
+    <script type="module" src="menu.js"></script>
 </head>
 <body class="flex-column">
     <header class=" p-lg w-full flex-centralize">
@@ -12,7 +13,7 @@
             <h1 class="fnt-title">Meus projetos</h1>
         </div>
         <div class="search-container gap-md w-full flex-centralize p-sm">
-            <input type="text" placeholder="Procurar projetos" class="inpt-primary p-sm border-md min-half">
+            <input type="text" placeholder="Procurar projetos" class="inpt-primary p-md fnt-md border-md min-half">
         </div>
         <div class="flex-end gap-md p-sm">
             <button class="btn btn-icon p-sm border-md">
@@ -24,16 +25,18 @@
         </div>
     </header>
 
-    <main class="flex-column p-lg gap-lg">
-        <div class="flex-space-between">
+    <main class="flex-column p-lg gap-lg main-container">
+        <div class="flex-space-between header-fixed">
             <h2 class="fnt-lg">Projetos ativos</h2>
             <button class="btn btn-secondary p-sm border-md">
                 <span class="fnt-sm">Ordenar ▼</span>
             </button>
         </div>
 
-        <div id="boards" class="flex-column gap-md">
-            <!-- Cards gerados dinamicamente via JavaScript -->
+        <div class="boards-container">
+            <div id="boards" class="flex-column gap-md">
+                <!-- Cards gerados dinamicamente via JavaScript -->
+            </div>
         </div>
     </main>
 

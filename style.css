@@ -32,6 +32,7 @@ body {
     min-width: 100dvw;
     opacity: 0;
     animation: fadeIn 0.5s ease-in-out forwards;
+    padding-left: 300px;
 }
 
 @keyframes fadeIn {
@@ -530,4 +531,70 @@ body {
 
 .dropdown:hover .dropdown-content {
     display: flex;
+}
+
+.menu-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 300px;
+    z-index: 1000;
+}
+
+.menu {
+    height: 100%;
+    overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .menu-container {
+        transform: translateX(-100%);
+        transition: var(--transition);
+    }
+
+    .menu-container.active {
+        transform: translateX(0);
+    }
+
+    body {
+        padding-left: 0;
+    }
+}
+
+.main-container {
+    height: calc(100vh - 200px); /* Ajuste o valor conforme a altura do seu header */
+    position: relative;
+    overflow: hidden;
+}
+
+.header-fixed {
+    position: sticky;
+    top: 0;
+    background-color: var(--background-color);
+    z-index: 10;
+    padding-bottom: 1rem;
+}
+
+.boards-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 1rem;
+}
+
+.boards-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.boards-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.boards-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.boards-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
 }
