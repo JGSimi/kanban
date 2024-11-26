@@ -1,0 +1,15 @@
+
+# Tecnologias 
+- Css, JavaScript, Html, API Taskboard
+
+# Projeto
+- Primeira tela: Login
+ - apenas um imput para email, com verificacao no banco de dados da api, ao logar o usuario é redirecionado para a tela de Boards
+
+- Tela de Boards
+ - Exibe as boards do usuario logado
+
+- Tela de Board
+ - Kanban
+
+# Foco total e Responsivdade
