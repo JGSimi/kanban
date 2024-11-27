@@ -65,6 +65,23 @@ body {
     height: 25%;
 }
 
+/* Align */
+
+.align-center {
+    align-items: center;
+}
+
+.align-start {
+    align-items: flex-start;
+}
+
+.align-end {
+    align-items: flex-end;
+}
+
+.align-stretch {
+    align-items: stretch;
+}
 
 /* Min Width and Height */
 
@@ -496,7 +513,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     transition: var(--transition);
-    border-left: 2px solid;
+    border-left: 4px solid;
 }
 
 
@@ -601,4 +618,17 @@ body {
 
 .boards-container::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.3);
+}
+
+.empty-state {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.error-state {
+    background: rgba(255, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    color: #d32f2f;
 }

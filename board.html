@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Quadro</title>
 </head>
 <body>
-    <header class="flex-space-between p-lg w-full">
-        <h1>Título do Quadro</h1>
-        <div class="header-actions flex-start gap-sm">
-            <button>
-                <span>⚙️</span>
-            </button>
-        </div>
-    </header>
     <main class="flex-column p-lg gap-lg main-container">
-        <div id="board-columns" class="flex-column gap-md">
-            <!-- Colunas e tarefas gerados dinamicamente via JavaScript -->
+        <div class="board-container">
+            <div class="board-header flex-row gap-sm align-center">
+                <button id="back-button" class="back-button btn-icon p-sm">
+                    <span>⬅</span>
+                </button>
+                <h1 id="board-title"></h1>
+            </div>
+            <div id="board-columns" class="board-columns">
+                <!-- Colunas serão inseridas aqui -->
+            </div>
         </div>
     </main>
     <script type="module" src="board.js"></script>
+    <script type="module" src="menu.js"></script>
 </body>
 </html>

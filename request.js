@@ -1,18 +1,25 @@
-const api = "https://personal-ga2xwx9j.outsystemscloud.com/TaskBoard_CS/rest/TaskBoard/"
+const api = "https://personal-ga2xwx9j.outsystemscloud.com/TaskBoard_CS/rest/TaskBoard/";
 
-// Função para fazer requisições à API
 const request = async (endpoint, method, body) => {
-    const response = await fetch(`${api}${endpoint}`, {
+    const options = {
         method,
-        body
-    });
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    if (body) {
+        options.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(`${api}${endpoint}`, options);
 
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     return response.json();
-}
+};
 
 
 // Armazena as funções de requisição
