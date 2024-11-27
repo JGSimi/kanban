@@ -4,19 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>TaskEasy</title>
 </head>
 <body class="flex-centralize full p-2xl">
     <div class="flex-centralize flex-row border-2 border-md border-secondary min-half">
         <div class="flex-space-around flex-column full p-lg gap-lg">
-            <h1 class="fnt-title border-bottom-md p-sm">TaskEasy</h1>
-            <p class="fnt-md">Gerencie suas tarefas com facilidade</p>
+            <h1 class="fnt-title border-bottom-md p-sm">
+                <i class="fas fa-tasks"></i> TaskEasy
+            </h1>
+            <p class="fnt-md">
+                <i class="fas fa-check-circle"></i> Gerencie suas tarefas com facilidade
+            </p>
         </div>
-        <form class="flex-start flex-column card card-secondary gap-lg p-lg border-left-md min-half" id="loginForm">
-            <h1 class="fnt-lg border-bottom-md p-sm">Acessar</h1>
+        <form class="flex-start flex-column gap-lg p-lg border-left-md min-half" id="loginForm">
+            <h1 class="fnt-lg border-bottom-md p-sm">
+                <i class="fas fa-sign-in-alt"></i> Acessar
+            </h1>
             <div class="flex-start flex-column gap-sm w-full">
-                <input class="w-full inpt-primary fnt-md border-md p-sm w-full" type="email" name="email" id="email" placeholder="Digite seu email" required>
-                <button type="submit" class="w-full btn btn-primary p-sm border-md fnt-md btn-sm border-r-lg w-full">Entrar</button>
+                <div class="input-wrapper position-relative w-full">
+                    <i class="fas fa-envelope position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%);"></i>
+                    <input class="w-full inpt-primary fnt-md border-md p-sm w-full" type="email" name="email" id="email" placeholder="Digite seu email" required style="padding-left: 35px;">
+                </div>
+                <button type="submit" class="w-full btn btn-primary p-sm border-md fnt-md btn-sm border-r-lg w-full">
+                    <i class="fas fa-arrow-right"></i> Entrar
+                </button>
             </div>
         </form>
     </div>

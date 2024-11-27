@@ -5,27 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskEasy</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script type="module" src="menu.js"></script>
 </head>
 <body class="flex-column">
-    <header class=" p-lg w-full flex-centralize">
-        <div class="flex-start gap-md">
-            <h1 class="fnt-title">Meus projetos</h1>
-        </div>
-        <div class="search-container gap-md w-full flex-centralize p-sm">
-            <input type="text" placeholder="Procurar projetos" class="inpt-primary p-md fnt-md border-md min-half">
-        </div>
-        <div class="flex-end gap-md p-sm">
-            <button class="btn btn-icon p-sm border-md" id="add-board">
-                <span class="fnt-md">+</span>
-            </button>
-            <button class="btn btn-icon p-sm border-md">
-                <span class="fnt-md">⚙️</span>
-            </button>
-        </div>
+
+    <header class="flex-row gap-lg">
+        <h1 class="fnt-title"><i class="fas fa-tasks"></i> Meus projetos</h1>
     </header>
 
-    <main class="flex-column p-lg gap-lg main-container">
+    <main class="flex-column gap-lg main-container">
         <div class="boards-container">
             <div id="boards" class="flex-column gap-md">
                 <!-- Cards gerados dinamicamente via JavaScript -->

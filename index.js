@@ -50,17 +50,28 @@ async function loadBoards() {
                 <div class="board-content" data-board-id="${board.Id}">
                     <div class="board-info">
                         <h2 class="fnt-lg" title="${board.Name}">
+                            <i class="fas fa-clipboard-list"></i>
                             ${board.Name.length > 20 ? board.Name.substring(0,20) + '...' : board.Name}
                         </h2>
                     </div>
                     <div class="board-actions">
                         <div class="dropdown">
-                            <button class="btn p-sm border-sm" aria-label="Opções">⋮</button>
+                            <button class="btn p-sm border-sm" aria-label="Opções">
+                                <i class="fas fa-ellipsis-vertical"></i>
+                            </button>
                             <div class="dropdown-content p-sm flex-column gap-sm">
-                                <button class="btn btn-primary p-sm border-sm" onclick="editBoard(${board.Id})">✐ Editar</button>
-                                <button class="btn btn-primary p-sm border-sm" onclick="deleteBoard(${board.Id})">🗑️ Excluir</button>
-                                <button class="btn btn-primary p-sm border-sm" onclick="duplicateBoard(${board.Id})">📋 Duplicar</button>
-                                <button class="btn btn-primary p-sm border-sm" onclick="toggleFavorite(${board.Id})">⭐ Favoritar</button>
+                                <button class="btn btn-primary p-sm border-sm" onclick="editBoard(${board.Id})">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn btn-primary p-sm border-sm" onclick="deleteBoard(${board.Id})">
+                                    <i class="fas fa-trash-alt"></i> Excluir
+                                </button>
+                                <button class="btn btn-primary p-sm border-sm" onclick="duplicateBoard(${board.Id})">
+                                    <i class="fas fa-copy"></i> Duplicar
+                                </button>
+                                <button class="btn btn-primary p-sm border-sm" onclick="toggleFavorite(${board.Id})">
+                                    <i class="fas fa-star"></i> Favoritar
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -86,8 +97,6 @@ async function loadBoards() {
         `;
     }
 }
-
-document.getElementById('add-board').onclick = actions.addNewBoardForm;
 
 
 

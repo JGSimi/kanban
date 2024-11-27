@@ -31,10 +31,65 @@ const request = async (endpoint, method, body) => {
 const requests = {
     // Person
     GetPeople: async () => await request(`People`, "GET"),
+    /*
+
+    Example Value
+    [
+        {
+            "Id": 1234567891234567,
+            "Name": "",
+            "BirthDate": "2014-12-31",
+            "PhoneNumber": "",
+            "Email": ""
+        }
+    ]
+
+    */
     GetPersonById: async (personId) => await request(`PersonById?PersonId=${personId}`, "GET"),
+    /*
+
+    Example Value
+    {
+        "Id": 1234567891234567,
+        "Name": "",
+        "BirthDate": "2014-12-31",
+        "PhoneNumber": "",
+        "Email": ""
+    }   
+    */
     GetPersonByEmail: async (email) => await request(`GetPersonByEmail?Email=${email}`, "GET"),
+    /*
+
+    Example Value
+    {
+        "Id": 1234567891234567,
+        "Name": "",
+        "BirthDate": "2014-12-31",
+        "PhoneNumber": "",
+        "Email": ""
+    }
+
+    */
     GetPersonConfig: async (personId) => await request(`PersonConfigById?PersonId=${personId}`, "GET"),
+    /*
+
+    Example Value
+    {
+        "PersonId": 1234567891234567,
+        "DefaultThemeId": 0,
+        "DefaultBoardId": 1234567891234567
+    }
+
+    */
     ConfigPersonTheme: async (personId, theme) => await request(`ConfigPersonTheme?PersonId=${personId}&Theme=${theme}`, "PATCH"),
+    /*
+    
+    {
+        "ThemeId": 0
+    }
+
+    */
+
 
     // Boards
     GetBoards: async () => {
@@ -54,7 +109,37 @@ const requests = {
             return [];
         }
     },
+    /*
+
+    Example Value
+    [
+        {
+            "Id": 1234567891234567,
+            "Name": "",
+            "Description": "",
+            "HexaBackgroundCoor": "",
+            "IsActive": false,
+            "CreatedBy": 1234567891234567,
+            "UpdatedBy": 1234567891234567
+        }
+    ]
+
+    */
     GetBoardById: async (boardId) => await request(`Board?BoardId=${boardId}`, "GET"),
+    /*
+
+    Example Value
+    {
+        "Id": 1234567891234567,
+        "Name": "",
+        "Description": "",
+        "HexaBackgroundCoor": "",
+        "IsActive": false,
+        "CreatedBy": 1234567891234567,
+        "UpdatedBy": 1234567891234567
+    }
+
+    */
     CreateBoard: async (board) => await request(`Board`, "POST", board),
     UpdateBoard: async (board) => await request(`Board`, "PUT", board),
     DeleteBoard: async (boardId) => await request(`Board?BoardId=${boardId}`, "DELETE"),

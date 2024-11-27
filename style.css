@@ -33,6 +33,7 @@ body {
     opacity: 0;
     animation: fadeIn 0.5s ease-in-out forwards;
     padding-left: 300px;
+    overflow: hidden;
 }
 
 @keyframes fadeIn {
@@ -671,7 +672,6 @@ body {
 
 .card {
     transition: var(--transition);
-    box-shadow: var(--shadow-sm);
     transform: translateY(20px);
     opacity: 0;
     animation: cardEntrance 0.5s var(--bounce) forwards;
@@ -698,11 +698,6 @@ body {
         opacity: 1;
         filter: blur(0);
     }
-}
-
-.card:hover {
-    transform: scale(1.02) translateY(-4px);
-    box-shadow: var(--shadow-lg);
 }
 
 .card:active {

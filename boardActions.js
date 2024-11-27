@@ -163,6 +163,7 @@ function addNewTaskForm(columnId) {
     form.querySelector('.btn-secondary').onclick = () => {
         modal.style.animation = 'modalSlideDown 0.3s var(--bounce) forwards';
         setTimeout(() => modal.remove(), 300);
+        window.location.reload();
     };
 
     form.onsubmit = async (e) => {
@@ -255,6 +256,7 @@ async function markAsDone(taskId) {
 
         // Recarrega as tasks da coluna após a atualização
         if (columnId) {
+            window.location.reload();
             await loadTasks(columnId);
         }
     } catch (error) {

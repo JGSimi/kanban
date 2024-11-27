@@ -4,17 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>Quadro</title>
 </head>
-<body">
+<body>
     <main class="flex-column p-lg gap-lg main-container">
         <div class="board-container flex-column gap-sm">
             <div class="board-header flex-row gap-sm align-center">
                 <button id="back-button" class="back-button btn-icon p-sm" title="Voltar para a lista de quadros" onclick="backToBoardList()">
-                    <span>⬅</span>
+                    <i class="fas fa-arrow-left"></i>
                 </button>
                 <button id="add-column-button" class="btn btn-primary border-md p-sm">
-                    <span>+ Adicionar Coluna</span>
+                    <i class="fas fa-plus"></i>
+                    <span>Adicionar Coluna</span>
                 </button>
                 <h1 id="board-title"></h1>
             </div>
