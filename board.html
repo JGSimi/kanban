@@ -6,12 +6,15 @@
     <link rel="stylesheet" href="style.css">
     <title>Quadro</title>
 </head>
-<body>
+<body">
     <main class="flex-column p-lg gap-lg main-container">
-        <div class="board-container">
+        <div class="board-container flex-column gap-sm">
             <div class="board-header flex-row gap-sm align-center">
-                <button id="back-button" class="back-button btn-icon p-sm">
+                <button id="back-button" class="back-button btn-icon p-sm" title="Voltar para a lista de quadros" onclick="backToBoardList()">
                     <span>⬅</span>
+                </button>
+                <button id="add-column-button" class="btn btn-primary border-md p-sm">
+                    <span>+ Adicionar Coluna</span>
                 </button>
                 <h1 id="board-title"></h1>
             </div>

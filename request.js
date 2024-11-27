@@ -18,7 +18,12 @@ const request = async (endpoint, method, body) => {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response.json();
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+        return response.json();
+    }
+    
+    return {};
 };
 
 
@@ -40,7 +45,15 @@ const requests = {
 
 
     // Columns
-    GetColumnsByBoardId: async (boardId) => await request(`ColumnByBoardId?BoardId=${boardId}`, "GET"),
+    GetColumnsByBoardId: async (boardId) => {
+        try {
+            const response = await request(`ColumnByBoardId?BoardId=${boardId}`, "GET");
+            return Array.isArray(response) ? response : [];
+        } catch (error) {
+            console.error('Erro ao buscar colunas:', error);
+            return [];
+        }
+    },
     CreateColumn: async (column) => await request(`Column`, "POST", column),
     UpdateColumn: async (column) => await request(`Column`, "PUT", column),
     DeleteColumn: async (columnId) => await request(`Column?ColumnId=${columnId}`, "DELETE"),

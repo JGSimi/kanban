@@ -6,8 +6,7 @@ function getBoardIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('id');
 }
-
-async function loadBoard() {
+async function loadBoardAndTasks() {
     const boardId = getBoardIdFromUrl();
     
     if (!boardId) {
@@ -25,7 +24,7 @@ async function loadBoard() {
             return;
         }
 
-        // Primeiro, busca os dados da board
+        // Busca os dados da board
         const board = await requests.GetBoardById(boardId);
         
         if (!board) {
@@ -36,36 +35,69 @@ async function loadBoard() {
 
         title.textContent = board.Name;
 
-        // Depois, busca as colunas
+        // Busca as colunas com verificação adicional
         const columns = await requests.GetColumnsByBoardId(boardId);
-        
+        console.log('Colunas recebidas:', columns); // Debug
+
         // Limpa o conteúdo anterior
         boardColumns.innerHTML = '';
 
-        // Verifica se columns é undefined ou vazio
-        if (!columns || columns.length === 0) {
+        // Verifica se columns é undefined, null ou vazio
+        if (!columns || !Array.isArray(columns) || columns.length === 0) {
             const emptyMessage = document.createElement("div");
             emptyMessage.classList.add("empty-state", "flex-centralize", "flex-column", "gap-md", "p-lg");
             emptyMessage.innerHTML = `
                 <h3 class="fnt-lg">Nenhuma coluna encontrada</h3>
                 <p class="fnt-md">Crie uma nova coluna para começar</p>
-                <button class="btn btn-primary p-sm border-md">+ Adicionar Coluna</button>
             `;
             boardColumns.appendChild(emptyMessage);
             return;
         }
         
-        columns.forEach(column => {
+        // Renderiza as colunas com animação
+        columns.forEach((column, index) => {
+            if (!column || !column.Name) {
+                console.error('Coluna inválida:', column);
+                return;
+            }
+
             const columnElement = document.createElement("div");
-            columnElement.classList.add("column");
+            columnElement.classList.add("column", "card", "card-primary");
+            columnElement.style.animationDelay = `${index * 0.1}s`;
             columnElement.innerHTML = `
-                <h2>${column.Title}</h2>
-                <div class="tasks-container flex-column gap-sm" data-column-id="${column.Id}">
+                <div class="column-header flex-space-between p-sm">
+                    <h2 class="fnt-lg">${column.Name}</h2>
+                    <div class="column-actions">
+                        <div class="dropdown">
+                            <button class="btn btn-icon p-sm" title="Mais opções">⋮</button>
+                            <div class="dropdown-content gap-sm p-sm">
+                                <button class="btn btn-primary p-sm border-md" title="Editar">✐ Editar</button>
+                                <button class="btn btn-primary p-sm border-md" title="Deletar">🗑️ Deletar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tasks-container flex-column gap-sm p-sm" data-column-id="${column.Id}">
                     <!-- Tasks geradas dinamicamente via JavaScript -->
                 </div>
+                <button class="btn btn-secondary w-full p-sm border-md add-task-button">
+                    + Adicionar tarefa
+                </button>
             `;
+
+            const addTaskButton = columnElement.querySelector('.add-task-button');
+            addTaskButton.addEventListener("click", () => {
+                const columnId = column.Id;
+                actions.addNewTaskForm(columnId);
+            });
+            
             boardColumns.appendChild(columnElement);
+
+            // Carrega as tasks para cada coluna
+            actions.loadTasks(column.Id);
         });
+
+        return true;
 
     } catch (error) {
         console.error('Erro ao carregar board:', error);
@@ -78,13 +110,16 @@ async function loadBoard() {
     }
 }
 
+document.getElementById("back-button").addEventListener("click", actions.backToBoardList);
+document.getElementById("add-column-button").addEventListener("click", actions.addNewColumnForm);
+
 // Verifica login antes de carregar a board
 async function init() {
     if (!user.load() || user.Id === null) {
         window.location.href = "login.html";
         return;
     }
-    await loadBoard();
+    await loadBoardAndTasks();
 }
 
 init();
