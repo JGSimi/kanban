@@ -37,7 +37,23 @@ const requests = {
     ConfigPersonTheme: async (personId, theme) => await request(`ConfigPersonTheme?PersonId=${personId}&Theme=${theme}`, "PATCH"),
 
     // Boards
-    GetBoards: async () => await request(`Boards`, "GET"),
+    GetBoards: async () => {
+        try {
+            const response = await request(`Boards`, "GET");
+            console.log('Resposta da API:', response); // Debug
+            
+            if (Array.isArray(response)) {
+                return response.map(board => ({
+                    ...board,
+                    UserId: board.UserId || board.CreatedBy
+                }));
+            }
+            return [];
+        } catch (error) {
+            console.error('Erro ao buscar boards:', error);
+            return [];
+        }
+    },
     GetBoardById: async (boardId) => await request(`Board?BoardId=${boardId}`, "GET"),
     CreateBoard: async (board) => await request(`Board`, "POST", board),
     UpdateBoard: async (board) => await request(`Board`, "PUT", board),

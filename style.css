@@ -772,7 +772,6 @@ body {
 }
 
 .board:hover {
-    transform: translateY(-4px) scale(1.02);
     background: rgba(0, 0, 0, 0.04);
 }
 
@@ -863,7 +862,7 @@ body {
     position: fixed;
     left: 0;
     top: 0;
-    height: 100vh;
+    height: 100%;
     width: 300px;
     z-index: 1000;
 }
@@ -1162,7 +1161,7 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 10000;
 }
 
 .modal-content {

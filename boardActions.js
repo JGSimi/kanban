@@ -5,6 +5,59 @@ function backToBoardList() {
     window.location.href = 'index.html';
 }
 
+async function addNewBoard(name) {
+    try {
+        await requests.CreateBoard({
+            Name: name,
+            Description: "",
+            HexaBackgroundCoor: "",
+            IsActive: true,
+            CreatedBy: user.Id,
+            UpdatedBy: user.Id
+        });
+    } catch (error) {
+        console.error('Erro ao criar board:', error);
+    }
+}
+
+function addNewBoardForm() {
+    const modal = document.createElement('div');
+    modal.classList.add('modal', 'flex-centralize');
+    modal.style.animation = 'modalSlideUp 0.3s var(--bounce) forwards';
+
+    const form = document.createElement('form');
+    form.classList.add('modal-content', 'card', 'card-primary');
+    form.innerHTML = `
+        <h2 class="fnt-lg">Novo Quadro</h2>
+        <input type="text" class="input-primary w-full p-sm border-md" placeholder="Nome do quadro" required>
+        <div class="flex-row gap-sm w-full">
+            <button type="submit" class="btn btn-primary w-full p-sm border-md">Criar</button>
+            <button type="button" class="btn btn-secondary w-full p-sm border-md">Cancelar</button>
+        </div>
+    `;
+
+    modal.appendChild(form);
+    document.body.appendChild(modal);
+
+    form.querySelector('input').focus();
+
+    form.querySelector('.btn-secondary').onclick = () => {
+        modal.style.animation = 'modalSlideDown 0.3s var(--bounce) forwards';
+        setTimeout(() => modal.remove(), 300);
+    };
+
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        await addNewBoard(form.querySelector('input').value);
+        modal.style.animation = 'modalSlideDown 0.3s var(--bounce) forwards';
+        setTimeout(() => {
+            modal.remove();
+            window.location.reload();
+        }, 300);
+    };
+
+}
+
 async function addNewColumn(name) {
     const urlParams = new URLSearchParams(window.location.search);
     const boardId = urlParams.get('id');
@@ -214,5 +267,6 @@ export default {
     backToBoardList,
     addNewColumnForm,
     addNewTaskForm,
+    addNewBoardForm,
     loadTasks
 }
