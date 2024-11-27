@@ -547,6 +547,10 @@ body {
     overflow-y: auto;
 }
 
+.menu-header {
+    align-items: center;
+}
+
 @media (max-width: 768px) {
     .menu-container {
         transform: translateX(-100%);

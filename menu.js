@@ -9,10 +9,6 @@ function Menu() {
     menu.innerHTML = `
         <div class="menu flex-column gap-md p-md">
             <div class="menu-header flex-column gap-sm">
-                <div class="menu-profile flex-start gap-sm p-sm">
-                    <div class="profile-pic rounded-full">👤</div>
-                    <span class="fnt-md">Usuário</span>
-                </div>
                 <button class="btn btn-secondary flex-start gap-sm p-sm border-sm w-full">
                     <span>+</span>
                     <span class="fnt-md">Adicionar tarefa</span>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quadro</title>
+</head>
+<body>
+    <header class="flex-space-between p-lg w-full">
+        <h1>Título do Quadro</h1>
+        <div class="header-actions flex-start gap-sm">
+            <button>
+                <span>⚙️</span>
+            </button>
+        </div>
+    </header>
+    <main class="flex-column p-lg gap-lg main-container">
+        <div id="board-columns" class="flex-column gap-md">
+            <!-- Colunas e tarefas gerados dinamicamente via JavaScript -->
+        </div>
+    </main>
+    <script type="module" src="board.js"></script>
+</body>
+</html>

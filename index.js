@@ -1,5 +1,5 @@
-import user from "./user.js";
 import requests from "./request.js";
+import user from "./user.js";
 
 async function checkLogin() {
     if (!user.load() || user.Id === null) {
@@ -14,7 +14,7 @@ async function loadBoards() {
         const boardElement = document.createElement("div");
         boardElement.classList.add("board");
         boardElement.innerHTML = `
-            <div class="board-content">
+            <div class="board-content" onclick="window.location.href = 'board.html?id=${board.Id}'">
                 <div class="board-info">
                     <h2 class="fnt-lg" title="${board.Name}">${board.Name.length > 20 ? board.Name.substring(0,20) + '...' : board.Name}</h2>
                 </div>

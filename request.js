@@ -1,5 +1,6 @@
 const api = "https://personal-ga2xwx9j.outsystemscloud.com/TaskBoard_CS/rest/TaskBoard/"
 
+// Função para fazer requisições à API
 const request = async (endpoint, method, body) => {
     const response = await fetch(`${api}${endpoint}`, {
         method,
@@ -13,6 +14,8 @@ const request = async (endpoint, method, body) => {
     return response.json();
 }
 
+
+// Armazena as funções de requisição
 const requests = {
     // Person
     GetPeople: async () => await request(`People`, "GET"),
