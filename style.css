@@ -1169,3 +1169,133 @@ body {
     padding: 1rem;
     gap: 1rem;
 }
+
+/* Responsividade para Login */
+@media (max-width: 768px) {
+    .p-2xl {
+        padding: 2rem;
+    }
+
+    .flex-row {
+        flex-direction: column;
+    }
+
+    .border-left-md {
+        border-left: none;
+        border-top: 2px solid;
+    }
+
+    .min-half {
+        min-width: 100%;
+        min-height: auto;
+    }
+
+    .fnt-title {
+        font-size: 2rem;
+    }
+
+    .fnt-lg {
+        font-size: 1.2rem;
+    }
+
+    .fnt-md {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .p-2xl {
+        padding: 1rem;
+    }
+
+    .p-lg {
+        padding: 1rem;
+    }
+
+    .fnt-title {
+        font-size: 1.8rem;
+    }
+
+    .fnt-lg {
+        font-size: 1.1rem;
+    }
+
+    .gap-lg {
+        gap: 1rem;
+    }
+}
+
+@media (max-height: 600px) {
+    .flex-centralize.full {
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
+}
+
+/* Animações responsivas */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Melhorias de Usabilidade Móvel */
+@media (hover: none) {
+    .btn:hover {
+        transform: none;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn:active {
+        transform: scale(0.98);
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .inpt-primary:focus {
+        transform: none;
+        box-shadow: var(--shadow-md);
+    }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 360px) {
+    .p-2xl {
+        padding: 0.5rem;
+    }
+
+    .p-lg {
+        padding: 0.8rem;
+    }
+
+    .fnt-title {
+        font-size: 1.5rem;
+    }
+
+    .gap-lg {
+        gap: 0.8rem;
+    }
+
+    .input-wrapper {
+        width: 100%;
+    }
+
+    .btn {
+        padding: 0.8rem;
+    }
+}
+
+/* Ajustes de orientação */
+@media (orientation: landscape) and (max-height: 500px) {
+    .flex-centralize.full {
+        min-height: auto;
+        padding: 1rem;
+    }
+
+    .flex-row {
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+}
