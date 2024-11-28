@@ -201,7 +201,16 @@ const requests = {
     */
     CreateColumn: async (column) => await request(`Column`, "POST", column),
     /*
-
+    Example Value
+    {
+        "Id": 1234567891234567,
+        "BoardId": 1234567891234567,
+        "Name": "",
+        "Position": 0,
+        "IsActive": false,
+        "CreatedBy": 1234567891234567,
+        "UpdatedBy": 1234567891234567
+    }  
     */
     UpdateColumn: async (column) => await request(`Column`, "PUT", column),
     /*
