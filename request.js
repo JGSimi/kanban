@@ -5,7 +5,7 @@ const request = async (endpoint, method, body) => {
         method,
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
     };
 
     if (body) {
@@ -141,9 +141,40 @@ const requests = {
 
     */
     CreateBoard: async (board) => await request(`Board`, "POST", board),
-    UpdateBoard: async (board) => await request(`Board`, "PUT", board),
-    DeleteBoard: async (boardId) => await request(`Board?BoardId=${boardId}`, "DELETE"),
+    /*
 
+    Example Value
+    {
+        "Id": 1234567891234567,
+        "Name": "",
+        "Description": "",
+        "HexaBackgroundCoor": "",
+        "IsActive": false,
+        "CreatedBy": 1234567891234567,
+        "UpdatedBy": 1234567891234567
+    }
+
+    */
+    UpdateBoard: async (board) => await request(`Board`, "PUT", board),
+    /*
+
+   	
+    Example Value
+    {
+        "Id": 1234567891234567,
+        "Name": "",
+        "Description": "",
+        "HexaBackgroundCoor": "",
+        "IsActive": false,
+        "CreatedBy": 1234567891234567,
+        "UpdatedBy": 1234567891234567
+    }
+
+    */
+    DeleteBoard: async (boardId) => await request(`Board?BoardId=${boardId}`, "DELETE"),
+    /*
+    Delete Board
+    */
 
     // Columns
     GetColumnsByBoardId: async (boardId) => {
@@ -155,8 +186,27 @@ const requests = {
             return [];
         }
     },
+    /*
+    [
+        {
+            "Id": 1234567891234567,
+            "BoardId": 1234567891234567,
+            "Name": "",
+            "Position": 0,
+            "IsActive": false,
+            "CreatedBy": 1234567891234567,
+            "UpdatedBy": 1234567891234567
+        }
+    ]
+    */
     CreateColumn: async (column) => await request(`Column`, "POST", column),
+    /*
+
+    */
     UpdateColumn: async (column) => await request(`Column`, "PUT", column),
+    /*
+
+    */
     DeleteColumn: async (columnId) => await request(`Column?ColumnId=${columnId}`, "DELETE"),
 
     // Tasks
