@@ -4,21 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskEasy</title>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script type="module" src="menu.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ffffff',
+                        secondary: '#000000',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out forwards',
+                        'slide-down': 'slideDown 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards',
+                        'hover-card': 'hoverCard 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        hoverCard: {
+                            '0%': { transform: 'translateY(0) scale(1)' },
+                            '100%': { transform: 'translateY(-5px) scale(1.02)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="flex-column">
-
-    <header class="flex-row gap-lg">
-        <h1 class="fnt-title"><i class="fas fa-tasks"></i> Meus projetos</h1>
+<body class="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 animate-fade-in">
+    <!-- Header -->
+    <header class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <h1 class="text-4xl font-bold animate-slide-down flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-800 text-transparent bg-clip-text">
+                        <i class="fas fa-tasks text-blue-600"></i>
+                        <span>Meus Projetos</span>
+                    </h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="add-board-button" 
+                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2 group">
+                        <i class="fas fa-plus transform group-hover:rotate-90 transition-transform duration-300"></i>
+                        <span>Novo Projeto</span>
+                    </button>
+                    <button id="user-menu" 
+                        class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition-colors duration-300">
+                        <i class="fas fa-user text-gray-600"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </header>
 
-    <main class="flex-column gap-lg main-container">
-        <div class="boards-container">
-            <div id="boards" class="flex-column gap-md">
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Search and Filter Section -->
+        <div class="mb-8 flex gap-4 items-center">
+            <div class="relative flex-1">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" 
+                    placeholder="Buscar projetos..." 
+                    class="w-full pl-12 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+            </div>
+            <select class="px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                <option value="all">Todos os Projetos</option>
+                <option value="active">Ativos</option>
+                <option value="archived">Arquivados</option>
+            </select>
+        </div>
+
+        <!-- Boards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="boards" class="contents">
                 <!-- Cards gerados dinamicamente via JavaScript -->
             </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-16 text-center">
+            <div class="w-24 h-24 mb-6 rounded-full bg-blue-100 flex items-center justify-center">
+                <i class="fas fa-clipboard-list text-4xl text-blue-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Nenhum projeto encontrado</h2>
+            <p class="text-gray-600 mb-6">Comece criando seu primeiro projeto!</p>
+            <button class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2">
+                <i class="fas fa-plus"></i>
+                <span>Criar Projeto</span>
+            </button>
         </div>
     </main>
 

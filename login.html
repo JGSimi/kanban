@@ -3,31 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>TaskEasy</title>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'title-bounce': 'titleBounce 1s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'form-slide': 'formSlide 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+                    },
+                    keyframes: {
+                        titleBounce: {
+                            '0%': { transform: 'translateY(-50px)', opacity: '0' },
+                            '60%': { transform: 'translateY(10px)', opacity: '0.8' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        formSlide: {
+                            '0%': { transform: 'translateX(50px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="flex-centralize full p-2xl">
-    <div class="flex-centralize flex-row border-2 border-md border-secondary min-half">
-        <div class="flex-space-around flex-column full p-lg gap-lg">
-            <h1 class="fnt-title border-bottom-md p-sm">
+<body class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div class="flex rounded-lg shadow-2xl bg-white max-w-4xl w-full overflow-hidden">
+        <!-- Lado Esquerdo - Apresentação -->
+        <div class="flex-1 flex flex-col justify-around p-8 bg-gradient-to-br from-blue-500 to-blue-700 text-white">
+            <h1 class="text-4xl font-bold pb-4 border-b-2 border-white/20 animate-title-bounce">
                 <i class="fas fa-tasks"></i> TaskEasy
             </h1>
-            <p class="fnt-md">
-                <i class="fas fa-check-circle"></i> Gerencie suas tarefas com facilidade
+            <p class="text-xl flex items-center gap-2">
+                <i class="fas fa-check-circle text-green-300"></i>
+                Gerencie suas tarefas com facilidade
             </p>
         </div>
-        <form class="flex-start flex-column gap-lg p-lg border-left-md min-half" id="loginForm">
-            <h1 class="fnt-lg border-bottom-md p-sm">
-                <i class="fas fa-sign-in-alt"></i> Acessar
+
+        <!-- Lado Direito - Formulário -->
+        <form class="flex-1 flex flex-col p-8 gap-8 bg-white animate-form-slide" id="loginForm">
+            <h1 class="text-2xl font-bold pb-4 border-b-2 border-gray-200 flex items-center gap-2">
+                <i class="fas fa-sign-in-alt text-blue-600"></i>
+                Acessar
             </h1>
-            <div class="flex-start flex-column gap-sm w-full">
-                <div class="input-wrapper position-relative w-full">
-                    <i class="fas fa-envelope position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%);"></i>
-                    <input class="w-full inpt-primary fnt-md border-md p-sm w-full" type="email" name="email" id="email" placeholder="Digite seu email" required style="padding-left: 35px;">
+            
+            <div class="flex flex-col gap-4 w-full">
+                <div class="relative">
+                    <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input 
+                        class="w-full px-10 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+                        type="email"
+                        name="email"
+                        id="email"
+                        placeholder="Digite seu email"
+                        required
+                    >
                 </div>
-                <button type="submit" class="w-full btn btn-primary p-sm border-md fnt-md btn-sm border-r-lg w-full">
-                    <i class="fas fa-arrow-right"></i> Entrar
+                <button 
+                    type="submit"
+                    class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all duration-300 flex items-center justify-center gap-2"
+                >
+                    <i class="fas fa-arrow-right"></i>
+                    Entrar
                 </button>
             </div>
         </form>

@@ -3,28 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>Quadro</title>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ffffff',
+                        secondary: '#000000',
+                    },
+                    animation: {
+                        'task-drag': 'taskDrag 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'task-drop': 'taskDrop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'column-highlight': 'columnHighlight 0.3s ease-in-out',
+                        'fade-in': 'fadeIn 0.5s ease-in-out forwards',
+                        'slide-up': 'slideUp 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards'
+                    },
+                    keyframes: {
+                        taskDrag: {
+                            '0%': { transform: 'scale(1) rotate(0deg)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' },
+                            '100%': { transform: 'scale(1.05) rotate(2deg)', boxShadow: '0 8px 15px rgba(0,0,0,0.15)' }
+                        },
+                        taskDrop: {
+                            '0%': { transform: 'scale(1.05) translateY(-10px)', opacity: '0.8' },
+                            '100%': { transform: 'scale(1) translateY(0)', opacity: '1' }
+                        },
+                        columnHighlight: {
+                            '0%': { backgroundColor: 'rgba(0,0,0,0)' },
+                            '100%': { backgroundColor: 'rgba(0,0,0,0.05)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <main class="flex-column p-lg gap-lg main-container">
-        <div class="board-container flex-column gap-sm">
-            <div class="board-header flex-row gap-sm align-center">
-                <button id="back-button" class="back-button btn-icon p-sm" title="Voltar para a lista de quadros" onclick="backToBoardList()">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <button id="add-column-button" class="btn btn-primary border-md p-sm">
-                    <i class="fas fa-plus"></i>
-                    <span>Adicionar Coluna</span>
-                </button>
-                <h1 id="board-title"></h1>
-            </div>
-            <div id="board-columns" class="board-columns">
-                <!-- Colunas serão inseridas aqui -->
+<body class="bg-gray-100 min-h-screen animate-fade-in">
+    <!-- Header -->
+    <header class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button id="back-button" 
+                        class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-300" 
+                        title="Voltar para a lista de quadros">
+                        <i class="fas fa-arrow-left text-gray-600"></i>
+                    </button>
+                    <h1 id="board-title" class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 text-transparent bg-clip-text"></h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button id="board-settings" class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-300">
+                        <i class="fas fa-cog text-gray-600"></i>
+                    </button>
+                    <button id="board-share" class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-300">
+                        <i class="fas fa-share-alt text-gray-600"></i>
+                    </button>
+                    <button id="add-column-button" 
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center gap-2 group">
+                        <i class="fas fa-plus transform group-hover:rotate-90 transition-transform duration-300"></i>
+                        <span>Nova Coluna</span>
+                    </button>
+                </div>
             </div>
         </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-full p-6">
+        <div id="board-columns" class="flex gap-6 overflow-x-auto min-h-[calc(100vh-8rem)] pb-8">
+            <!-- Colunas serão inseridas aqui -->
+        </div>
     </main>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-600">Carregando quadro...</p>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50">
+        <div class="text-center max-w-md mx-auto p-8">
+            <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-columns text-4xl text-blue-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Nenhuma coluna encontrada</h2>
+            <p class="text-gray-600 mb-6">Comece adicionando uma nova coluna ao seu quadro!</p>
+            <button id="add-first-column" 
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center gap-2 mx-auto">
+                <i class="fas fa-plus"></i>
+                <span>Adicionar Coluna</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="hidden fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50">
+        <div class="text-center max-w-md mx-auto p-8">
+            <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-exclamation-triangle text-4xl text-red-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Ops! Algo deu errado</h2>
+            <p class="text-gray-600 mb-6">Não foi possível carregar o quadro. Tente novamente mais tarde.</p>
+            <button onclick="window.location.reload()" 
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center gap-2 mx-auto">
+                <i class="fas fa-redo"></i>
+                <span>Tentar Novamente</span>
+            </button>
+        </div>
+    </div>
+
     <script type="module" src="board.js"></script>
     <script type="module" src="menu.js"></script>
 </body>
