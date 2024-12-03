@@ -1,77 +1,67 @@
 import requests from "./request.js";
 import user from "./user.js";
+import Modal from './components/Modal.js';
 
 function backToBoardList() {
     window.location.href = 'index.html';
 }
 
 async function addNewBoard(name, color, description) {
-    try {
-        const newBoard = {
-            Name: name,
-            Description: description,
-            HexaBackgroundCoor: color,
-            IsActive: true,
-            CreatedBy: user.Id,
-            UpdatedBy: user.Id
-        };
-        
-        await requests.CreateBoard(newBoard);
-    } catch (error) {
-        console.error('Erro ao criar board:', error);
-        throw error;
+    const userId = user.Id;
+    if (!userId) {
+        throw new Error('Usuário não autenticado');
     }
+
+    await requests.CreateBoard({
+        Name: name,
+        Description: description || '',
+        HexaBackgroundCoor: color,
+        CreatedBy: parseInt(userId)
+    });
 }
 
 function addNewBoardForm() {
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
-    
-    const form = document.createElement('form');
-    form.className = 'bg-white rounded-lg shadow-xl p-8 max-w-md w-full transform transition-all duration-300 scale-95 opacity-0';
-    setTimeout(() => form.classList.replace('scale-95', 'scale-100'), 0);
-    setTimeout(() => form.classList.replace('opacity-0', 'opacity-100'), 0);
-    
-    form.innerHTML = `
-        <h2 class="text-2xl font-bold mb-6">Novo Quadro</h2>
-        <input id="name" type="text" class="w-full px-4 py-2 mb-4 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" placeholder="Nome do quadro" required>
-        <input id="color" type="color" class="w-full h-12 mb-4 rounded-lg cursor-pointer" placeholder="Cor de fundo" required>
-        <textarea id="description" class="w-full px-4 py-2 mb-6 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" placeholder="Descrição do quadro" rows="3"></textarea>
-        <div class="flex gap-4">
-            <button type="submit" class="flex-1 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Criar</button>
-            <button type="button" class="flex-1 px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">Cancelar</button>
-        </div>
-    `;
+    const modal = new Modal({
+        title: 'Novo Quadro',
+        isForm: true,
+        content: `
+            <div class="space-y-4">
+                <div>
+                    <input id="name" type="text" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
+                        placeholder="Nome do quadro" required>
+                </div>
+                <div>
+                    <input id="color" type="color" 
+                        class="w-full h-14 rounded-xl cursor-pointer" 
+                        value="#4F46E5">
+                </div>
+                <div>
+                    <textarea id="description" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
+                        placeholder="Descrição do quadro" 
+                        rows="3"></textarea>
+                </div>
+            </div>
+        `,
+        confirmText: 'Criar Quadro',
+        cancelText: 'Cancelar',
+        onConfirm: async () => {
+            try {
+                const name = modal.modalElement.querySelector('#name').value;
+                const color = modal.modalElement.querySelector('#color').value;
+                const description = modal.modalElement.querySelector('#description').value;
 
-    modal.appendChild(form);
-    document.body.appendChild(modal);
-
-    form.querySelector('input').focus();
-
-    form.querySelector('button[type="button"]').onclick = () => {
-        form.classList.replace('scale-100', 'scale-95');
-        form.classList.replace('opacity-100', 'opacity-0');
-        setTimeout(() => modal.remove(), 300);
-    };
-
-    form.onsubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await addNewBoard(
-                form.querySelector('#name').value,
-                form.querySelector('#color').value,
-                form.querySelector('#description').value
-            );
-            form.classList.replace('scale-100', 'scale-95');
-            form.classList.replace('opacity-100', 'opacity-0');
-            setTimeout(() => {
-                modal.remove();
+                await addNewBoard(name, color, description);
                 window.location.reload();
-            }, 300);
-        } catch (error) {
-            alert('Erro ao criar quadro. Tente novamente.');
+            } catch (error) {
+                alert('Erro ao criar quadro. Tente novamente.');
+            }
         }
-    };
+    });
+
+    modal.create();
+    modal.modalElement.querySelector('#name').focus();
 }
 
 async function addNewColumn(name) {
