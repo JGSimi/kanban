@@ -39,6 +39,7 @@ const user = {
         this.PhoneNumber = null;
         this.Email = null;
         localStorage.removeItem('user');
+        window.location.href = 'login.html';
     }
 }
 

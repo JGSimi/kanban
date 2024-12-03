@@ -2,6 +2,14 @@ import requests from "./request.js";
 import user from "./user.js";
 import boardActions from "./boardActions.js";
 
+
+async function verifyUser() {
+    if (!user.load() || !user.Id) {
+        window.location.href = 'login.html';
+        return;
+    }
+}
+
 async function loadBoards() {
     try {
         console.log('Carregando boards para o usuário:', user.Id);
@@ -34,49 +42,88 @@ async function loadBoards() {
 
         userBoards.forEach((board, index) => {
             const boardElement = document.createElement('div');
-            boardElement.className = 'bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 group hover:scale-[1.02] transform';
-            boardElement.style.animationDelay = `${index * 0.1}s`;
+            boardElement.className = 'group relative rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] transform animate-fade-in overflow-hidden cursor-pointer';
+            boardElement.style.cssText = `animation-delay: ${index * 0.05}s;`;
+            
+            // Converte a cor para um formato válido
+            const baseColor = board.HexaBackgroundCoor ? 
+                (board.HexaBackgroundCoor.startsWith('#') ? board.HexaBackgroundCoor : '#' + board.HexaBackgroundCoor) : 
+                '#4F46E5';
+            
             boardElement.innerHTML = `
-                <div class="relative overflow-hidden rounded-xl">
-                    <div class="absolute inset-0 bg-gradient-to-br from-black/20 to-black/60 group-hover:opacity-70 transition-opacity duration-300"></div>
-                    <div class="h-32" style="background-color: ${board.HexaBackgroundCoor || '#4F46E5'}"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
-                        <h2 class="text-xl font-bold truncate">${board.Name}</h2>
-                        <p class="text-sm opacity-90 truncate">${board.Description || 'Sem descrição'}</p>
+                <div class="relative h-full">
+                    <!-- Background com Gradiente -->
+                    <div class="absolute inset-0">
+                        <div class="absolute inset-0" style="background: linear-gradient(145deg, ${baseColor}, ${baseColor}99);"></div>
+                        <div class="absolute inset-0 opacity-30 mix-blend-overlay" style="background-image: radial-gradient(circle at 50% 0%, white 0%, transparent 75%);"></div>
                     </div>
-                </div>
-                <div class="p-4 flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <span class="text-sm text-gray-600">
-                            <i class="fas fa-clock mr-1"></i>
-                            ${new Date(board.CreatedAt).toLocaleDateString()}
-                        </span>
-                        <span class="text-sm text-gray-600">
-                            <i class="fas fa-list-check mr-1"></i>
-                            ${board.TaskCount || 0} tarefas
-                        </span>
+
+                    <!-- Conteúdo do Card -->
+                    <div class="relative p-6">
+                        <!-- Cabeçalho -->
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-black/30 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 shadow-lg border border-white/20">
+                                    <i class="fas fa-clipboard-list text-white text-xl"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <h2 class="text-2xl font-bold text-white mb-1 truncate drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)]">
+                                        ${board.Name}
+                                    </h2>
+                                    <p class="text-white text-sm line-clamp-2 drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">
+                                        ${board.Description || 'Sem descrição'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rodapé -->
+                        <div class="flex justify-between items-center mt-6">
+                            
+                            <!-- Botões de Ação -->
+                            <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
+                                <button class="p-2.5 bg-black/30 hover:bg-black/40 backdrop-blur-sm rounded-xl transition-all duration-200 hover:scale-110 border border-white/20 shadow-[0_2px_4px_rgba(0,0,0,0.2)]" 
+                                    title="Editar">
+                                    <i class="fas fa-edit text-white"></i>
+                                </button>
+                                <button class="p-2.5 bg-black/30 hover:bg-red-500/40 backdrop-blur-sm rounded-xl transition-all duration-200 hover:scale-110 border border-white/20 shadow-[0_2px_4px_rgba(0,0,0,0.2)]" 
+                                    title="Excluir">
+                                    <i class="fas fa-trash text-white"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <button class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-300" title="Editar">
-                            <i class="fas fa-edit text-gray-600"></i>
-                        </button>
-                        <button class="p-2 hover:bg-red-50 rounded-full transition-colors duration-300" title="Excluir">
-                            <i class="fas fa-trash text-red-500"></i>
-                        </button>
-                    </div>
+
+                    <!-- Overlay de Hover -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
             `;
 
+            // Event Delegation com Debounce
+            let clickTimeout;
             boardElement.addEventListener('click', (e) => {
-                if (e.target.closest('button')) return;
-                window.location.href = `board.html?id=${board.Id}`;
+                if (clickTimeout) {
+                    clearTimeout(clickTimeout);
+                }
+                
+                clickTimeout = setTimeout(() => {
+                    const target = e.target;
+                    
+                    if (target.closest('button[title="Editar"]') || target.closest('button[title="Excluir"]')) {
+                        e.stopPropagation();
+                        const button = target.closest('button');
+                        
+                        if (button.title === 'Editar') {
+                            editBoard(board);
+                        } else if (button.title === 'Excluir') {
+                            deleteBoard(board.Id);
+                        }
+                        return;
+                    }
+
+                    window.location.href = `board.html?id=${board.Id}`;
+                }, 100);
             });
-
-            const editButton = boardElement.querySelector('button[title="Editar"]');
-            const deleteButton = boardElement.querySelector('button[title="Excluir"]');
-
-            editButton.addEventListener('click', () => editBoard(board));
-            deleteButton.addEventListener('click', () => deleteBoard(board.Id));
 
             boardsContainer.appendChild(boardElement);
         });
@@ -173,3 +220,6 @@ function debounce(func, wait) {
 export default {
     loadBoards
 };
+
+
+verifyUser();

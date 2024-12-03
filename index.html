@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,63 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script type="module" src="menu.js"></script>
+    <style>
+        /* Estilização da Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c5c5c5;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Animação de Fade para os Cards */
+        @keyframes fadeUpCard {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-up {
+            animation: fadeUpCard 0.5s ease forwards;
+        }
+
+        /* Scroll Suave */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Container Principal com Scroll Personalizado */
+        .custom-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #c5c5c5 #f1f1f1;
+        }
+
+        /* Efeito de Parallax Suave */
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
     <script>
         tailwind.config = {
             theme: {
@@ -19,6 +76,7 @@
                         'fade-in': 'fadeIn 0.5s ease-in-out forwards',
                         'slide-down': 'slideDown 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards',
                         'hover-card': 'hoverCard 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards',
+                        'pulse-soft': 'pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -32,6 +90,10 @@
                         hoverCard: {
                             '0%': { transform: 'translateY(0) scale(1)' },
                             '100%': { transform: 'translateY(-5px) scale(1.02)' }
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.8' }
                         }
                     }
                 }
@@ -39,26 +101,28 @@
         }
     </script>
 </head>
-<body class="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 animate-fade-in">
+<body class="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 custom-scroll">
     <!-- Header -->
-    <header class="bg-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="flex justify-between items-center">
+    <header class="bg-white/80 backdrop-blur-md shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
+            <div class="flex justify-between items-center w-full">
                 <div class="flex items-center gap-4">
-                    <h1 class="text-4xl font-bold animate-slide-down flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-800 text-transparent bg-clip-text">
-                        <i class="fas fa-tasks text-blue-600"></i>
-                        <span>Meus Projetos</span>
+                    <h1 class="text-4xl font-bold animate-slide-down flex items-center gap-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+                            <i class="fas fa-tasks text-white"></i>
+                        </div>
+                        <span class="bg-gradient-to-r from-blue-600 to-blue-800 text-transparent bg-clip-text">
+                            Meus Projetos
+                        </span>
                     </h1>
                 </div>
                 <div class="flex items-center gap-4">
                     <button id="add-board-button" 
-                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2 group">
-                        <i class="fas fa-plus transform group-hover:rotate-90 transition-transform duration-300"></i>
+                        class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300 shadow-md flex items-center gap-3 group">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                            <i class="fas fa-plus transform group-hover:rotate-90 transition-transform duration-300"></i>
+                        </div>
                         <span>Novo Projeto</span>
-                    </button>
-                    <button id="user-menu" 
-                        class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition-colors duration-300">
-                        <i class="fas fa-user text-gray-600"></i>
                     </button>
                 </div>
             </div>
@@ -66,16 +130,16 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 custom-scroll">
         <!-- Search and Filter Section -->
-        <div class="mb-8 flex gap-4 items-center">
+        <div class="mb-8 flex gap-4 items-center bg-white/50 p-4 rounded-2xl backdrop-blur-sm shadow-sm">
             <div class="relative flex-1">
                 <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 <input type="text" 
                     placeholder="Buscar projetos..." 
-                    class="w-full pl-12 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                    class="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white/80">
             </div>
-            <select class="px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+            <select class="px-6 py-3 rounded-xl border-2 border-gray-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-white/80">
                 <option value="all">Todos os Projetos</option>
                 <option value="active">Ativos</option>
                 <option value="archived">Arquivados</option>
@@ -91,14 +155,16 @@
 
         <!-- Empty State -->
         <div id="empty-state" class="hidden flex-col items-center justify-center py-16 text-center">
-            <div class="w-24 h-24 mb-6 rounded-full bg-blue-100 flex items-center justify-center">
-                <i class="fas fa-clipboard-list text-4xl text-blue-600"></i>
+            <div class="w-32 h-32 mb-8 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-xl shadow-blue-100 animate-pulse-soft">
+                <i class="fas fa-clipboard-list text-5xl text-blue-600"></i>
             </div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Nenhum projeto encontrado</h2>
-            <p class="text-gray-600 mb-6">Comece criando seu primeiro projeto!</p>
-            <button class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2">
-                <i class="fas fa-plus"></i>
-                <span>Criar Projeto</span>
+            <h2 class="text-3xl font-bold text-gray-800 mb-3 bg-gradient-to-r from-gray-800 to-gray-600 text-transparent bg-clip-text">Nenhum projeto encontrado</h2>
+            <p class="text-gray-600 mb-8 text-lg">Comece criando seu primeiro projeto!</p>
+            <button class="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300 shadow-md flex items-center gap-3 group">
+                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                    <i class="fas fa-plus transform group-hover:rotate-90 transition-transform duration-300"></i>
+                </div>
+                <span class="text-lg">Criar Projeto</span>
             </button>
         </div>
     </main>
