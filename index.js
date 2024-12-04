@@ -4,6 +4,9 @@ import boardActions from "./boardActions.js";
 import EmptyState from "./components/EmptyState.js";
 import Loading from "./components/Loading.js";
 import Card from "./components/Card.js";
+import DragAndDropService from "./services/DragAndDropService.js";
+
+let dragAndDrop;
 
 async function verifyUser() {
     if (!user.load() || !user.Id) {
@@ -76,11 +79,33 @@ async function loadBoards() {
                 onEdit: () => editBoard(board),
                 onDelete: () => deleteBoard(board.Id),
                 onClick: () => window.location.href = `board.html?id=${board.Id}`,
-                animationDelay: index * 0.05
+                animationDelay: index * 0.05,
+                draggable: true
             });
 
             boardsContainer.appendChild(card.create());
         });
+
+        // Inicializa o serviço de drag and drop
+        if (dragAndDrop) {
+            dragAndDrop.updateDropzones();
+        } else {
+            dragAndDrop = new DragAndDropService({
+                draggableSelector: '[data-draggable]',
+                dropzoneSelector: '#boards',
+                handleSelector: '[data-drag-handle]',
+                onDragStart: (element) => {
+                    element.style.opacity = '0.5';
+                },
+                onDragEnd: (element) => {
+                    element.style.opacity = '1';
+                },
+                onDrop: (element, dropzone) => {
+                    // Aqui você pode implementar a lógica de reordenação
+                    console.log('Card movido:', element, 'para:', dropzone);
+                }
+            });
+        }
 
     } catch (error) {
         console.error('Erro ao carregar boards:', error);

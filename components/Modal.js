@@ -1,114 +1,316 @@
+import AnimationService from '../services/AnimationService.js';
+
 export default class Modal {
     constructor(options = {}) {
         this.options = {
             title: options.title || '',
             content: options.content || '',
-            onConfirm: options.onConfirm || (() => {}),
-            onCancel: options.onCancel || (() => {}),
             confirmText: options.confirmText || 'Confirmar',
             cancelText: options.cancelText || 'Cancelar',
-            width: options.width || 'md',
-            showCancelButton: options.showCancelButton !== undefined ? options.showCancelButton : true,
+            onConfirm: options.onConfirm || (() => {}),
+            onCancel: options.onCancel || (() => {}),
+            onOpen: options.onOpen || (() => {}),
+            onClose: options.onClose || (() => {}),
+            isForm: options.isForm || false,
             customClass: options.customClass || '',
-            isForm: options.isForm || false
+            size: options.size || 'md', // sm, md, lg, xl, full
+            showClose: options.showClose !== undefined ? options.showClose : true,
+            closeOnEsc: options.closeOnEsc !== undefined ? options.closeOnEsc : true,
+            closeOnClickOutside: options.closeOnClickOutside !== undefined ? options.closeOnClickOutside : true,
+            showFooter: options.showFooter !== undefined ? options.showFooter : true,
+            loading: options.loading || false,
+            icon: options.icon || '',
+            iconColor: options.iconColor || 'blue',
+            preventClose: options.preventClose || false,
+            position: options.position || 'center', // center, top, bottom
+            animation: options.animation || 'scale' // scale, slide, fade
         };
+
         this.modalElement = null;
+        this.isClosing = false;
     }
 
     create() {
-        const modal = document.createElement('div');
-        modal.className = 'fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50';
+        // Remove modal anterior se existir
+        if (this.modalElement) {
+            this.modalElement.remove();
+        }
+
+        // Cria o container do modal
+        this.modalElement = document.createElement('div');
+        this.modalElement.className = `fixed inset-0 z-50 ${this.getPositionClasses()}`;
         
-        const modalContent = document.createElement(this.options.isForm ? 'form' : 'div');
+        // Define o tamanho do modal
+        const sizes = {
+            sm: 'max-w-sm',
+            md: 'max-w-lg',
+            lg: 'max-w-2xl',
+            xl: 'max-w-4xl',
+            full: 'max-w-full mx-4'
+        };
+
+        // Cria o backdrop
+        const backdrop = document.createElement('div');
+        backdrop.className = 'absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300 opacity-0';
+        this.modalElement.appendChild(backdrop);
+
+        // Cria o conteúdo do modal
+        const modalContent = document.createElement('div');
         modalContent.className = `
-            bg-white rounded-xl shadow-2xl p-8 
-            ${this.options.width === 'md' ? 'max-w-md' : 'max-w-lg'} 
-            w-full transform transition-all duration-300 
-            scale-95 opacity-0 
+            relative bg-white rounded-2xl shadow-2xl 
+            ${sizes[this.options.size]} w-full mx-4 
+            transform transition-all duration-300 
+            ${this.getAnimationClasses()} 
             ${this.options.customClass}
         `;
         
+        // Adiciona o HTML do modal
         modalContent.innerHTML = `
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                    ${this.options.title}
-                </h2>
-                <button type="button" class="close-modal p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
-                    <i class="fas fa-times text-gray-500"></i>
-                </button>
-            </div>
-            <div class="mb-6">${this.options.content}</div>
-            <div class="flex gap-4">
-                <button type="${this.options.isForm ? 'submit' : 'button'}" class="confirm-button flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2">
-                    <i class="fas fa-check"></i>
-                    ${this.options.confirmText}
-                </button>
-                ${this.options.showCancelButton ? `
-                    <button type="button" class="cancel-button flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors duration-300 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i>
-                        ${this.options.cancelText}
-                    </button>
+            <div class="p-6 sm:p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-4">
+                        ${this.options.icon ? `
+                            <div class="w-12 h-12 rounded-xl bg-${this.options.iconColor}-100 flex items-center justify-center">
+                                <i class="fas ${this.options.icon} text-${this.options.iconColor}-600 text-xl"></i>
+                            </div>
+                        ` : ''}
+                        <h2 class="text-2xl font-bold text-gray-800">${this.options.title}</h2>
+                    </div>
+                    ${this.options.showClose ? `
+                        <button class="close-button p-2 hover:bg-gray-100 rounded-xl transition-all duration-300 group">
+                            <i class="fas fa-times text-gray-500 group-hover:rotate-90 transition-transform duration-300"></i>
+                        </button>
+                    ` : ''}
+                </div>
+
+                ${this.options.isForm ? `<form class="space-y-6">` : ''}
+                    <div class="modal-content">
+                        ${this.options.content}
+                    </div>
+                    
+                    ${this.options.showFooter ? `
+                        <div class="flex gap-4 mt-8">
+                            ${!this.options.preventClose ? `
+                                <button type="button" class="cancel-button flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2 group">
+                                    <i class="fas fa-times text-sm group-hover:rotate-90 transition-transform duration-300"></i>
+                                    ${this.options.cancelText}
+                                </button>
+                            ` : ''}
+                            <button ${this.options.isForm ? 'type="submit"' : 'type="button"'} 
+                                class="confirm-button flex-1 px-6 py-3 bg-${this.options.iconColor}-600 text-white rounded-xl hover:bg-${this.options.iconColor}-700 transition-all duration-300 flex items-center justify-center gap-2 group">
+                                <i class="fas fa-check text-sm group-hover:scale-110 transition-transform duration-300"></i>
+                                ${this.options.confirmText}
+                            </button>
+                        </div>
+                    ` : ''}
+                ${this.options.isForm ? `</form>` : ''}
+
+                ${this.options.loading ? `
+                    <div class="loading-overlay absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center rounded-2xl">
+                        <div class="w-10 h-10 border-4 border-${this.options.iconColor}-600 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
                 ` : ''}
             </div>
         `;
 
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
+        this.modalElement.appendChild(modalContent);
+        document.body.appendChild(this.modalElement);
 
-        // Animações
+        // Anima a entrada do modal
         requestAnimationFrame(() => {
-            modalContent.classList.replace('scale-95', 'scale-100');
-            modalContent.classList.replace('opacity-0', 'opacity-100');
+            backdrop.classList.add('opacity-100');
+            this.showModal(modalContent);
         });
 
-        // Event Listeners
-        const closeModal = () => this.close();
-        
-        modalContent.querySelector('.close-modal').addEventListener('click', closeModal);
-        modalContent.querySelector('.cancel-button')?.addEventListener('click', () => {
-            this.close();
-            this.options.onCancel();
-        });
+        // Event listeners
+        this.setupEventListeners(modalContent);
 
-        if (this.options.isForm) {
-            modalContent.addEventListener('submit', async (e) => {
+        // Callback de abertura
+        this.options.onOpen(this);
+
+        return this.modalElement;
+    }
+
+    setupEventListeners(modalContent) {
+        const closeButton = modalContent.querySelector('.close-button');
+        const cancelButton = modalContent.querySelector('.cancel-button');
+        const confirmButton = modalContent.querySelector('.confirm-button');
+        const form = this.options.isForm ? modalContent.querySelector('form') : null;
+
+        if (closeButton) {
+            closeButton.addEventListener('click', () => this.handleClose());
+        }
+
+        if (cancelButton) {
+            cancelButton.addEventListener('click', () => this.handleClose());
+        }
+
+        if (form) {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                await this.options.onConfirm(e);
+                await this.handleConfirm(e);
             });
-        } else {
-            modalContent.querySelector('.confirm-button').addEventListener('click', async () => {
-                await this.options.onConfirm();
+        } else if (confirmButton) {
+            confirmButton.addEventListener('click', async () => {
+                await this.handleConfirm();
             });
         }
 
-        // Fechar no ESC
-        const handleEsc = (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-                document.removeEventListener('keydown', handleEsc);
-            }
-        };
-        document.addEventListener('keydown', handleEsc);
+        // Fecha o modal ao clicar fora
+        if (this.options.closeOnClickOutside && !this.options.preventClose) {
+            this.modalElement.addEventListener('click', (e) => {
+                if (e.target === this.modalElement) {
+                    this.handleClose();
+                }
+            });
+        }
 
-        // Fechar no click fora
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
-
-        this.modalElement = modal;
-        return modal;
+        // Fecha o modal com ESC
+        if (this.options.closeOnEsc && !this.options.preventClose) {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && this.modalElement && !this.isClosing) {
+                    this.handleClose();
+                }
+            });
+        }
     }
 
-    close() {
+    async handleConfirm(event = null) {
+        if (this.isClosing) return;
+        
+        try {
+            this.setLoading(true);
+            await this.options.onConfirm(event);
+            await this.close();
+        } catch (error) {
+            console.error('Erro ao confirmar:', error);
+            this.shake();
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    async handleClose() {
+        if (this.isClosing || this.options.preventClose) return;
+        
+        try {
+            await this.options.onCancel();
+            await this.close();
+        } catch (error) {
+            console.error('Erro ao fechar:', error);
+            this.shake();
+        }
+    }
+
+    getPositionClasses() {
+        switch (this.options.position) {
+            case 'top':
+                return 'flex items-start justify-center pt-16';
+            case 'bottom':
+                return 'flex items-end justify-center pb-16';
+            default:
+                return 'flex items-center justify-center';
+        }
+    }
+
+    getAnimationClasses() {
+        switch (this.options.animation) {
+            case 'slide':
+                return this.options.position === 'bottom' ? 'translate-y-full opacity-0' : '-translate-y-full opacity-0';
+            case 'fade':
+                return 'opacity-0';
+            default:
+                return 'scale-95 opacity-0';
+        }
+    }
+
+    showModal(modalContent) {
+        const animations = {
+            scale: { transform: 'scale(1)', opacity: '1' },
+            slide: { transform: 'translateY(0)', opacity: '1' },
+            fade: { opacity: '1' }
+        };
+
+        Object.assign(modalContent.style, animations[this.options.animation]);
+    }
+
+    hideModal(modalContent) {
+        const animations = {
+            scale: { transform: 'scale(0.95)', opacity: '0' },
+            slide: { 
+                transform: this.options.position === 'bottom' ? 'translateY(100%)' : 'translateY(-100%)',
+                opacity: '0'
+            },
+            fade: { opacity: '0' }
+        };
+
+        Object.assign(modalContent.style, animations[this.options.animation]);
+    }
+
+    setLoading(loading) {
         if (!this.modalElement) return;
+
+        const loadingOverlay = this.modalElement.querySelector('.loading-overlay');
+        const form = this.modalElement.querySelector('form');
+        const buttons = this.modalElement.querySelectorAll('button');
+
+        if (loading) {
+            if (!loadingOverlay) {
+                const overlay = document.createElement('div');
+                overlay.className = `loading-overlay absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center rounded-2xl`;
+                overlay.innerHTML = `
+                    <div class="w-10 h-10 border-4 border-${this.options.iconColor}-600 border-t-transparent rounded-full animate-spin"></div>
+                `;
+                this.modalElement.querySelector('.modal-content').appendChild(overlay);
+            }
+            if (form) form.classList.add('pointer-events-none', 'opacity-50');
+            buttons.forEach(button => button.disabled = true);
+        } else {
+            if (loadingOverlay) loadingOverlay.remove();
+            if (form) form.classList.remove('pointer-events-none', 'opacity-50');
+            buttons.forEach(button => button.disabled = false);
+        }
+    }
+
+    shake() {
+        if (!this.modalElement) return;
+        const modalContent = this.modalElement.querySelector('div');
+        AnimationService.shake(modalContent);
+    }
+
+    async close() {
+        if (!this.modalElement || this.isClosing) return;
         
-        const modalContent = this.modalElement.firstElementChild;
-        modalContent.classList.replace('scale-100', 'scale-95');
-        modalContent.classList.replace('opacity-100', 'opacity-0');
+        this.isClosing = true;
+        const backdrop = this.modalElement.querySelector('div');
+        const modalContent = this.modalElement.querySelector('div:nth-child(2)');
+
+        backdrop.classList.remove('opacity-100');
+        this.hideModal(modalContent);
+
+        await new Promise(resolve => setTimeout(resolve, 300));
         
-        setTimeout(() => {
-            this.modalElement.remove();
-            this.modalElement = null;
-        }, 300);
+        this.modalElement.remove();
+        this.modalElement = null;
+        this.isClosing = false;
+
+        // Callback de fechamento
+        this.options.onClose();
+    }
+
+    setContent(content) {
+        if (!this.modalElement) return;
+        const contentContainer = this.modalElement.querySelector('.modal-content');
+        if (contentContainer) {
+            contentContainer.innerHTML = content;
+        }
+    }
+
+    setTitle(title) {
+        if (!this.modalElement) return;
+        const titleElement = this.modalElement.querySelector('h2');
+        if (titleElement) {
+            titleElement.textContent = title;
+        }
     }
 }

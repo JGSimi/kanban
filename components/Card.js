@@ -1,3 +1,5 @@
+import AnimationService from '../services/AnimationService.js';
+
 export default class Card {
     constructor(options = {}) {
         this.options = {
@@ -9,14 +11,18 @@ export default class Card {
             onDelete: options.onDelete || (() => {}),
             onClick: options.onClick || (() => {}),
             customClass: options.customClass || '',
-            animationDelay: options.animationDelay || 0
+            animationDelay: options.animationDelay || 0,
+            draggable: options.draggable || false
         };
     }
 
     create() {
         const container = document.createElement('div');
-        container.className = `group relative rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] transform animate-fade-in overflow-hidden cursor-pointer ${this.options.customClass}`;
-        container.style.cssText = `animation-delay: ${this.options.animationDelay}s;`;
+        container.className = `group relative rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform overflow-hidden cursor-pointer ${this.options.customClass}`;
+        
+        if (this.options.draggable) {
+            container.setAttribute('data-draggable', 'true');
+        }
 
         // Converte a cor para um formato válido
         const baseColor = this.options.backgroundColor.startsWith('#') ? 
@@ -36,7 +42,7 @@ export default class Card {
                     <!-- Cabeçalho -->
                     <div class="flex justify-between items-start mb-6">
                         <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-black/30 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 shadow-lg border border-white/20">
+                            <div class="w-12 h-12 bg-black/30 backdrop-blur-sm rounded-xl flex items-center justify-center transition-all duration-300 group-hover:rotate-6 shadow-lg border border-white/20" data-drag-handle>
                                 <i class="fas ${this.options.icon} text-white text-xl"></i>
                             </div>
                             <div class="flex flex-col">
@@ -71,6 +77,21 @@ export default class Card {
             </div>
         `;
 
+        // Adiciona animações
+        if (this.options.animationDelay > 0) {
+            container.style.opacity = '0';
+            setTimeout(() => {
+                container.style.opacity = '1';
+                AnimationService.slideUp(container);
+            }, this.options.animationDelay * 1000);
+        } else {
+            AnimationService.slideUp(container);
+        }
+
+        // Adiciona efeitos de hover e click
+        AnimationService.addHoverEffect(container);
+        AnimationService.addClickEffect(container);
+
         // Event Delegation com Debounce
         let clickTimeout;
         container.addEventListener('click', (e) => {
@@ -88,7 +109,10 @@ export default class Card {
                     if (button.title === 'Editar') {
                         this.options.onEdit();
                     } else if (button.title === 'Excluir') {
-                        this.options.onDelete();
+                        // Adiciona animação de shake antes de excluir
+                        AnimationService.shake(container).onfinish = () => {
+                            this.options.onDelete();
+                        };
                     }
                     return;
                 }
