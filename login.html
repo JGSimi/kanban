@@ -1,18 +1,23 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <title>TaskEasy</title>
+    <title>TaskEasy - Login</title>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     animation: {
                         'title-bounce': 'titleBounce 1s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-                        'form-slide': 'formSlide 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+                        'form-slide': 'formSlide 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-soft': 'pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                        'slide-up': 'slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                        'fade-in': 'fadeIn 0.5s ease-out'
                     },
                     keyframes: {
                         titleBounce: {
@@ -23,54 +28,199 @@
                         formSlide: {
                             '0%': { transform: 'translateX(50px)', opacity: '0' },
                             '100%': { transform: 'translateX(0)', opacity: '1' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.8' }
+                        },
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
                         }
                     }
                 }
             }
         }
     </script>
-</head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-    <div class="flex rounded-lg shadow-2xl bg-white max-w-4xl w-full overflow-hidden">
-        <!-- Lado Esquerdo - Apresentação -->
-        <div class="flex-1 flex flex-col justify-around p-8 bg-gradient-to-br from-blue-500 to-blue-700 text-white">
-            <h1 class="text-4xl font-bold pb-4 border-b-2 border-white/20 animate-title-bounce">
-                <i class="fas fa-tasks"></i> TaskEasy
-            </h1>
-            <p class="text-xl flex items-center gap-2">
-                <i class="fas fa-check-circle text-green-300"></i>
-                Gerencie suas tarefas com facilidade
-            </p>
-        </div>
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-        <!-- Lado Direito - Formulário -->
-        <form class="flex-1 flex flex-col p-8 gap-8 bg-white animate-form-slide" id="loginForm">
-            <h1 class="text-2xl font-bold pb-4 border-b-2 border-gray-200 flex items-center gap-2">
-                <i class="fas fa-sign-in-alt text-blue-600"></i>
-                Acessar
-            </h1>
-            
-            <div class="flex flex-col gap-4 w-full">
-                <div class="relative">
-                    <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input 
-                        class="w-full px-10 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
-                        type="email"
-                        name="email"
-                        id="email"
-                        placeholder="Digite seu email"
-                        required
-                    >
+        .pattern-bg {
+            background-image: 
+                radial-gradient(circle at 100% 0%, rgba(255,255,255,0.1) 0%, transparent 25%),
+                radial-gradient(circle at 0% 100%, rgba(255,255,255,0.1) 0%, transparent 25%);
+            background-size: 50% 50%;
+            background-position: 0 0, 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .mesh-gradient {
+            background: linear-gradient(45deg, 
+                rgba(59, 130, 246, 0.1) 0%,
+                rgba(147, 197, 253, 0.1) 50%,
+                rgba(59, 130, 246, 0.1) 100%
+            );
+            animation: meshMove 20s ease infinite;
+            background-size: 400% 400%;
+        }
+
+        @keyframes meshMove {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
+
+        .input-focus-effect:focus {
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1),
+                       0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .button-gradient {
+            background: linear-gradient(135deg, #4F46E5, #3B82F6);
+            transition: all 0.3s ease;
+        }
+
+        .button-gradient:hover {
+            background: linear-gradient(135deg, #4338CA, #2563EB);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 mesh-gradient">
+    <!-- Background Patterns -->
+    <div class="fixed inset-0 pattern-bg opacity-50"></div>
+
+    <!-- Main Container -->
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <!-- Login Card -->
+        <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row transform hover:scale-[1.02] transition-all duration-500 animate-slide-up">
+            <!-- Lado Esquerdo - Apresentação -->
+            <div class="w-full md:w-1/2 bg-gradient-to-br from-indigo-600 via-blue-600 to-blue-700 p-8 md:p-12 text-white relative overflow-hidden">
+                <!-- Efeito de Brilho -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent"></div>
+
+                <!-- Logo e Título -->
+                <div class="relative space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm shadow-lg">
+                            <i class="fas fa-tasks text-2xl"></i>
+                        </div>
+                        <h1 class="text-4xl font-bold animate-title-bounce">TaskEasy</h1>
+                    </div>
+                    <p class="text-lg text-blue-100 leading-relaxed">Gerencie seus projetos com simplicidade e eficiência em uma interface moderna e intuitiva.</p>
                 </div>
-                <button 
-                    type="submit"
-                    class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                    <i class="fas fa-arrow-right"></i>
-                    Entrar
-                </button>
+
+                <!-- Features -->
+                <div class="relative mt-12 space-y-6">
+                    <h2 class="text-xl font-semibold text-blue-100">Recursos</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-check text-green-400"></i>
+                            </div>
+                            <span class="text-base group-hover:translate-x-2 transition-transform duration-300">Quadros Kanban personalizáveis</span>
+                        </div>
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-check text-green-400"></i>
+                            </div>
+                            <span class="text-base group-hover:translate-x-2 transition-transform duration-300">Drag and Drop intuitivo</span>
+                        </div>
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-check text-green-400"></i>
+                            </div>
+                            <span class="text-base group-hover:translate-x-2 transition-transform duration-300">Interface moderna e responsiva</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
+
+            <!-- Lado Direito - Formulário -->
+            <div class="w-full md:w-1/2 p-8 md:p-12 bg-white relative">
+                <div class="absolute inset-0 mesh-gradient opacity-30"></div>
+                
+                <div class="relative max-w-sm mx-auto flex flex-col justify-center h-full">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Bem-vindo de volta!</h2>
+                        <p class="text-gray-500">Acesse sua conta para continuar</p>
+                    </div>
+
+                    <form id="loginForm" class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-700 flex items-center gap-2" for="email">
+                                <i class="fas fa-envelope-open text-blue-500"></i>
+                                Email
+                            </label>
+                            <div class="relative group">
+                                <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-blue-500 transition-colors duration-300"></i>
+                                <input 
+                                    class="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 input-focus-effect"
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    placeholder="Digite seu email"
+                                    required
+                                >
+                                <div class="email-error text-red-500 text-sm mt-2 hidden animate-fade-in">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button 
+                            type="submit"
+                            class="w-full py-3 button-gradient text-white rounded-xl flex items-center justify-center gap-3 group relative overflow-hidden"
+                        >
+                            <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            <div class="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                                <i class="fas fa-arrow-right text-sm transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                            </div>
+                            <span class="font-medium">Entrar</span>
+                        </button>
+                    </form>
+
+                    <!-- Loading State -->
+                    <div id="loading-state" class="hidden flex-col items-center justify-center py-8 animate-fade-in">
+                        <div class="relative">
+                            <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                            <div class="absolute inset-0 w-16 h-16 border-4 border-blue-200 border-t-transparent rounded-full animate-pulse opacity-50"></div>
+                        </div>
+                        <p class="text-gray-600 mt-4 animate-pulse">Verificando suas credenciais...</p>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="error-state" class="hidden animate-shake">
+                        <div class="bg-red-50 text-red-600 p-4 rounded-xl mt-6 flex items-center gap-3 border border-red-100">
+                            <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <span class="error-message flex-1"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="login.js"></script>

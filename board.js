@@ -10,6 +10,16 @@ import AnimationService from "./services/AnimationService.js";
 
 let currentBoard = null;
 let dragAndDrop = null;
+let columns = new Map(); // Armazena as instâncias das colunas
+
+const columnColors = [
+    { color: 'blue', icon: 'fa-clipboard-list' },
+    { color: 'indigo', icon: 'fa-clipboard-check' },
+    { color: 'purple', icon: 'fa-list-check' },
+    { color: 'pink', icon: 'fa-list-ul' },
+    { color: 'rose', icon: 'fa-list-ol' },
+    { color: 'green', icon: 'fa-list' }
+];
 
 async function loadBoard() {
     let loadingElement = null;
@@ -34,9 +44,9 @@ async function loadBoard() {
         document.getElementById('board-title').textContent = currentBoard.Name;
         document.title = `${currentBoard.Name} - TaskEasy`;
 
-        const columns = await requests.GetColumnsByBoardId(boardId);
+        const columnsData = await requests.GetColumnsByBoardId(boardId);
 
-        if (!columns || columns.length === 0) {
+        if (!columnsData || columnsData.length === 0) {
             // Criar e mostrar empty state
             const emptyState = new EmptyState({
                 title: 'Nenhuma coluna encontrada',
@@ -58,51 +68,54 @@ async function loadBoard() {
         const boardColumns = document.getElementById('board-columns');
         boardColumns.innerHTML = '';
 
+        // Limpa o Map de colunas
+        columns.clear();
+
         // Cria e adiciona as colunas
-        columns.forEach(async (columnData, index) => {
+        columnsData.forEach(async (columnData, index) => {
+            const columnStyle = columnColors[index % columnColors.length];
+            
             const column = new Column({
                 id: columnData.Id,
                 name: columnData.Name,
+                color: columnStyle.color,
+                icon: columnStyle.icon,
+                showTaskCount: true,
+                collapsible: true,
+                collapsed: false,
+                maxHeight: '70vh',
+                animationDelay: 300 + (index * 100),
                 onAddTask: (columnId) => boardActions.addNewTaskForm(columnId),
                 onEditColumn: (column) => editColumn(column),
                 onDeleteColumn: (columnId) => deleteColumn(columnId),
-                animationDelay: 300 + (index * 100)
+                onMoveTask: async (taskId, newColumnId) => {
+                    try {
+                        await requests.UpdateTask({
+                            Id: parseInt(taskId),
+                            ColumnId: parseInt(newColumnId),
+                            UpdatedBy: user.Id
+                        });
+
+                        await Promise.all([
+                            loadTasks(columnData.Id),
+                            loadTasks(newColumnId)
+                        ]);
+                    } catch (error) {
+                        console.error('Erro ao mover task:', error);
+                        column.shake();
+                    }
+                }
             });
+
+            // Armazena a instância da coluna
+            columns.set(columnData.Id, column);
 
             const columnElement = column.create();
             boardColumns.appendChild(columnElement);
 
             // Carrega as tasks da coluna
             const tasks = await requests.GetTasksByColumnId(columnData.Id);
-            const tasksContainer = columnElement.querySelector('.tasks-container');
-            tasksContainer.innerHTML = '';
-
-            if (!tasks || tasks.length === 0) {
-                const emptyMessage = document.createElement("div");
-                emptyMessage.className = "flex flex-col items-center justify-center p-4 text-gray-400 text-sm";
-                emptyMessage.innerHTML = `
-                    <i class="fas fa-tasks mb-2"></i>
-                    <p>Nenhuma tarefa</p>
-                `;
-                tasksContainer.appendChild(emptyMessage);
-                return;
-            }
-
-            tasks.forEach((taskData, taskIndex) => {
-                const task = new Task({
-                    id: taskData.Id,
-                    title: taskData.Title,
-                    description: taskData.Description,
-                    isActive: taskData.IsActive,
-                    columnId: columnData.Id,
-                    onEdit: (task) => editTask(task),
-                    onDelete: (taskId) => deleteTask(taskId, columnData.Id),
-                    onStatusChange: (taskId, isActive) => updateTaskStatus(taskId, isActive),
-                    animationDelay: taskIndex * 0.05
-                });
-
-                tasksContainer.appendChild(task.create());
-            });
+            await column.renderTasks(tasks);
         });
 
         // Inicializa o serviço de drag and drop
@@ -115,14 +128,22 @@ async function loadBoard() {
                 handleSelector: '[data-drag-handle]',
                 onDragStart: (element) => {
                     element.style.opacity = '0.5';
+                    // Destaca as colunas que podem receber o item
+                    document.querySelectorAll('[data-dropzone]').forEach(dropzone => {
+                        dropzone.classList.add('bg-blue-50', 'transition-colors', 'duration-300');
+                    });
                 },
                 onDragEnd: (element) => {
                     element.style.opacity = '1';
+                    // Remove o destaque das colunas
+                    document.querySelectorAll('[data-dropzone]').forEach(dropzone => {
+                        dropzone.classList.remove('bg-blue-50');
+                    });
                 },
                 onDrop: async (element, dropzone) => {
                     const taskId = element.getAttribute('data-task-id');
-                    const newColumnId = dropzone.querySelector('.tasks-container').getAttribute('data-column-id');
-                    const oldColumnId = element.closest('.tasks-container').getAttribute('data-column-id');
+                    const newColumnId = dropzone.getAttribute('data-column-id');
+                    const oldColumnId = element.closest('[data-column-id]').getAttribute('data-column-id');
 
                     if (oldColumnId !== newColumnId) {
                         try {
@@ -132,13 +153,25 @@ async function loadBoard() {
                                 UpdatedBy: user.Id
                             });
 
-                            await Promise.all([
-                                loadTasks(oldColumnId),
-                                loadTasks(newColumnId)
-                            ]);
+                            // Atualiza as colunas envolvidas
+                            const oldColumn = columns.get(parseInt(oldColumnId));
+                            const newColumn = columns.get(parseInt(newColumnId));
+
+                            if (oldColumn && newColumn) {
+                                const tasks = await Promise.all([
+                                    requests.GetTasksByColumnId(oldColumnId),
+                                    requests.GetTasksByColumnId(newColumnId)
+                                ]);
+
+                                await Promise.all([
+                                    oldColumn.renderTasks(tasks[0]),
+                                    newColumn.renderTasks(tasks[1])
+                                ]);
+                            }
                         } catch (error) {
                             console.error('Erro ao mover task:', error);
-                            AnimationService.shake(element);
+                            const column = columns.get(parseInt(oldColumnId));
+                            if (column) column.shake();
                         }
                     }
                 }
@@ -172,8 +205,7 @@ async function loadBoard() {
 }
 
 async function editColumn(column) {
-    // Implementar edição de coluna
-    console.log('Editar coluna:', column);
+    boardActions.editColumnForm(column);
 }
 
 async function deleteColumn(columnId) {
@@ -189,6 +221,10 @@ async function deleteColumn(columnId) {
 
         await requests.DeleteColumn(columnId);
         Loading.hide(loadingElement);
+
+        // Remove a coluna do Map
+        columns.delete(columnId);
+
         await loadBoard();
     } catch (error) {
         console.error('Erro ao deletar coluna:', error);
