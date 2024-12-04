@@ -14,7 +14,7 @@ export default class Loading {
         const container = document.createElement('div');
         
         if (this.options.fullscreen) {
-            container.className = `fixed inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-50 ${this.options.customClass}`;
+            container.className = `fixed inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-50 ${this.options.customClass}`;
         } else {
             container.className = `flex flex-col items-center justify-center p-8 ${this.options.customClass}`;
         }
@@ -30,12 +30,12 @@ export default class Loading {
                 container.innerHTML = `
                     <div class="flex flex-col items-center gap-4">
                         <div class="${sizes[this.options.size].spinner} animate-spin">
-                            <svg class="text-${this.options.color}-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="text-${this.options.color}-600 dark:text-${this.options.color}-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                         </div>
-                        <span class="text-gray-600 ${sizes[this.options.size].text} animate-pulse">
+                        <span class="text-gray-600 dark:text-gray-300 ${sizes[this.options.size].text} animate-pulse">
                             ${this.options.text}
                         </span>
                     </div>
@@ -45,11 +45,11 @@ export default class Loading {
             case 'skeleton':
                 container.innerHTML = `
                     <div class="space-y-4 w-full">
-                        <div class="h-8 bg-gray-200 rounded-lg animate-pulse"></div>
+                        <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
                         <div class="space-y-2">
-                            <div class="h-4 bg-gray-200 rounded-lg animate-pulse"></div>
-                            <div class="h-4 bg-gray-200 rounded-lg animate-pulse w-5/6"></div>
-                            <div class="h-4 bg-gray-200 rounded-lg animate-pulse w-4/6"></div>
+                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse w-5/6"></div>
+                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse w-4/6"></div>
                         </div>
                     </div>
                 `;
@@ -58,8 +58,8 @@ export default class Loading {
             case 'pulse':
                 container.innerHTML = `
                     <div class="flex flex-col items-center gap-4">
-                        <div class="${sizes[this.options.size].spinner} rounded-full bg-gradient-to-r from-${this.options.color}-500 to-${this.options.color}-600 animate-pulse"></div>
-                        <span class="text-gray-600 ${sizes[this.options.size].text} animate-pulse">
+                        <div class="${sizes[this.options.size].spinner} rounded-full bg-gradient-to-r from-${this.options.color}-500 to-${this.options.color}-600 dark:from-${this.options.color}-600 dark:to-${this.options.color}-700 animate-pulse"></div>
+                        <span class="text-gray-600 dark:text-gray-300 ${sizes[this.options.size].text} animate-pulse">
                             ${this.options.text}
                         </span>
                     </div>
@@ -83,4 +83,4 @@ export default class Loading {
             setTimeout(() => element.remove(), 300);
         }
     }
-} 
+}

@@ -29,23 +29,23 @@ export default class Column {
 
     create() {
         this.container = document.createElement('div');
-        this.container.className = `flex-shrink-0 w-80 bg-gray-50 rounded-xl shadow-md overflow-hidden ${this.options.customClass}`;
+        this.container.className = `flex-shrink-0 w-80 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900 overflow-hidden ${this.options.customClass}`;
         this.container.setAttribute('data-dropzone', 'true');
         this.container.setAttribute('data-column-id', this.options.id);
         
         this.container.innerHTML = `
-            <div class="p-4 bg-white border-b border-gray-200">
+            <div class="p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3 flex-1 min-w-0">
-                        <div class="w-8 h-8 rounded-lg bg-${this.options.color}-100 flex items-center justify-center">
-                            <i class="fas ${this.options.icon} text-${this.options.color}-600"></i>
+                        <div class="w-8 h-8 rounded-lg bg-${this.options.color}-100 dark:bg-${this.options.color}-900 flex items-center justify-center">
+                            <i class="fas ${this.options.icon} text-${this.options.color}-600 dark:text-${this.options.color}-400"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h3 class="font-semibold text-gray-800 truncate" title="${this.options.name}">
+                            <h3 class="font-semibold text-gray-800 dark:text-gray-200 truncate" title="${this.options.name}">
                                 ${this.options.name}
                             </h3>
                             ${this.options.showTaskCount ? `
-                                <div class="text-sm text-gray-500 task-count">
+                                <div class="text-sm text-gray-500 dark:text-gray-400 task-count">
                                     <span class="count">0</span> tarefas
                                 </div>
                             ` : ''}
@@ -53,27 +53,27 @@ export default class Column {
                     </div>
                     <div class="flex items-center gap-1">
                         ${this.options.collapsible ? `
-                            <button class="collapse-button p-1.5 hover:bg-gray-100 rounded-lg transition-colors duration-300 group" title="${this.isCollapsed ? 'Expandir' : 'Recolher'}">
-                                <i class="fas fa-chevron-${this.isCollapsed ? 'down' : 'up'} text-gray-500 text-sm transform transition-transform duration-300"></i>
+                            <button class="collapse-button p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-300 group" title="${this.isCollapsed ? 'Expandir' : 'Recolher'}">
+                                <i class="fas fa-chevron-${this.isCollapsed ? 'down' : 'up'} text-gray-500 dark:text-gray-400 text-sm transform transition-transform duration-300"></i>
                             </button>
                         ` : ''}
-                        <button class="edit-button p-1.5 hover:bg-gray-100 rounded-lg transition-colors duration-300 group" title="Editar coluna">
-                            <i class="fas fa-pencil text-gray-500 text-sm group-hover:rotate-12 transition-transform duration-300"></i>
+                        <button class="edit-button p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-300 group" title="Editar coluna">
+                            <i class="fas fa-pencil text-gray-500 dark:text-gray-400 text-sm group-hover:rotate-12 transition-transform duration-300"></i>
                         </button>
-                        <button class="delete-button p-1.5 hover:bg-red-50 rounded-lg transition-colors duration-300 group" title="Excluir coluna">
-                            <i class="fas fa-trash text-red-500 text-sm group-hover:rotate-12 transition-transform duration-300"></i>
+                        <button class="delete-button p-1.5 hover:bg-red-50 dark:hover:bg-red-900/50 rounded-lg transition-colors duration-300 group" title="Excluir coluna">
+                            <i class="fas fa-trash text-red-500 dark:text-red-400 text-sm group-hover:rotate-12 transition-transform duration-300"></i>
                         </button>
                     </div>
                 </div>
             </div>
             <div class="column-content transition-all duration-300" style="max-height: ${this.options.maxHeight};">
                 <div class="tasks-container min-h-[100px] p-4 space-y-3 overflow-y-auto" data-column-id="${this.options.id}">
-                    <div class="flex items-center justify-center h-24 text-gray-400">
+                    <div class="flex items-center justify-center h-24 text-gray-400 dark:text-gray-500">
                         <i class="fas fa-spinner fa-spin"></i>
                     </div>
                 </div>
                 <div class="p-4 pt-0">
-                    <button class="add-task-button w-full p-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:shadow-md">
+                    <button class="add-task-button w-full p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group hover:shadow-md dark:hover:shadow-gray-900">
                         <i class="fas fa-plus transform group-hover:rotate-90 transition-transform duration-300"></i>
                         <span>Adicionar Tarefa</span>
                     </button>

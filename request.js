@@ -81,7 +81,10 @@ const requests = {
     }
 
     */
-    ConfigPersonTheme: async (personId, theme) => await request(`ConfigPersonTheme?PersonId=${personId}&Theme=${theme}`, "PATCH"),
+    ConfigPersonTheme: async (personId, theme) => await request(`ConfigPersonTheme`, "PATCH", {
+        PersonId: personId,
+        ThemeId: theme
+    }),
     /*
     
     {

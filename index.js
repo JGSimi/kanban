@@ -5,6 +5,7 @@ import EmptyState from "./components/EmptyState.js";
 import Loading from "./components/Loading.js";
 import Card from "./components/Card.js";
 import DragAndDropService from "./services/DragAndDropService.js";
+import ThemeService from './services/ThemeService.js';
 
 let dragAndDrop;
 
@@ -181,6 +182,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (filterSelect) {
         filterSelect.addEventListener('change', filterBoards);
     }
+
+    // Inicializa o tema
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', async () => {
+            await ThemeService.toggle();
+        });
+    }
+
+    // Carrega preferência do usuário quando fizer login
+    document.addEventListener('userLoggedIn', async (event) => {
+        const userId = event.detail.userId;
+        await ThemeService.loadUserPreference(userId);
+    });
 });
 
 function filterBoards() {

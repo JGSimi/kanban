@@ -57,7 +57,7 @@ export default class Modal {
         // Cria o conteúdo do modal
         const modalContent = document.createElement('div');
         modalContent.className = `
-            relative bg-white rounded-2xl shadow-2xl 
+            relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl 
             ${sizes[this.options.size]} w-full mx-4 
             transform transition-all duration-300 
             ${this.getAnimationClasses()} 
@@ -70,15 +70,15 @@ export default class Modal {
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center gap-4">
                         ${this.options.icon ? `
-                            <div class="w-12 h-12 rounded-xl bg-${this.options.iconColor}-100 flex items-center justify-center">
-                                <i class="fas ${this.options.icon} text-${this.options.iconColor}-600 text-xl"></i>
+                            <div class="w-12 h-12 rounded-xl bg-${this.options.iconColor}-100 dark:bg-${this.options.iconColor}-900 flex items-center justify-center">
+                                <i class="fas ${this.options.icon} text-${this.options.iconColor}-600 dark:text-${this.options.iconColor}-400 text-xl"></i>
                             </div>
                         ` : ''}
-                        <h2 class="text-2xl font-bold text-gray-800">${this.options.title}</h2>
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">${this.options.title}</h2>
                     </div>
                     ${this.options.showClose ? `
-                        <button class="close-button p-2 hover:bg-gray-100 rounded-xl transition-all duration-300 group">
-                            <i class="fas fa-times text-gray-500 group-hover:rotate-90 transition-transform duration-300"></i>
+                        <button class="close-button p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-300 group">
+                            <i class="fas fa-times text-gray-500 dark:text-gray-400 group-hover:rotate-90 transition-transform duration-300"></i>
                         </button>
                     ` : ''}
                 </div>
@@ -91,13 +91,13 @@ export default class Modal {
                     ${this.options.showFooter ? `
                         <div class="flex gap-4 mt-8">
                             ${!this.options.preventClose ? `
-                                <button type="button" class="cancel-button flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2 group">
+                                <button type="button" class="cancel-button flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-300 flex items-center justify-center gap-2 group">
                                     <i class="fas fa-times text-sm group-hover:rotate-90 transition-transform duration-300"></i>
                                     ${this.options.cancelText}
                                 </button>
                             ` : ''}
                             <button ${this.options.isForm ? 'type="submit"' : 'type="button"'} 
-                                class="confirm-button flex-1 px-6 py-3 bg-${this.options.iconColor}-600 text-white rounded-xl hover:bg-${this.options.iconColor}-700 transition-all duration-300 flex items-center justify-center gap-2 group">
+                                class="confirm-button flex-1 px-6 py-3 bg-${this.options.iconColor}-600 dark:bg-${this.options.iconColor}-700 text-white rounded-xl hover:bg-${this.options.iconColor}-700 dark:hover:bg-${this.options.iconColor}-800 transition-all duration-300 flex items-center justify-center gap-2 group">
                                 <i class="fas fa-check text-sm group-hover:scale-110 transition-transform duration-300"></i>
                                 ${this.options.confirmText}
                             </button>
@@ -106,8 +106,8 @@ export default class Modal {
                 ${this.options.isForm ? `</form>` : ''}
 
                 ${this.options.loading ? `
-                    <div class="loading-overlay absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center rounded-2xl">
-                        <div class="w-10 h-10 border-4 border-${this.options.iconColor}-600 border-t-transparent rounded-full animate-spin"></div>
+                    <div class="loading-overlay absolute inset-0 bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 flex items-center justify-center rounded-2xl">
+                        <div class="w-10 h-10 border-4 border-${this.options.iconColor}-600 dark:border-${this.options.iconColor}-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 ` : ''}
             </div>
@@ -257,9 +257,9 @@ export default class Modal {
         if (loading) {
             if (!loadingOverlay) {
                 const overlay = document.createElement('div');
-                overlay.className = `loading-overlay absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center rounded-2xl`;
+                overlay.className = `loading-overlay absolute inset-0 bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 flex items-center justify-center rounded-2xl`;
                 overlay.innerHTML = `
-                    <div class="w-10 h-10 border-4 border-${this.options.iconColor}-600 border-t-transparent rounded-full animate-spin"></div>
+                    <div class="w-10 h-10 border-4 border-${this.options.iconColor}-600 dark:border-${this.options.iconColor}-400 border-t-transparent rounded-full animate-spin"></div>
                 `;
                 this.modalElement.querySelector('.modal-content').appendChild(overlay);
             }

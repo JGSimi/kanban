@@ -34,24 +34,24 @@ function addNewBoardForm() {
         content: `
             <div class="space-y-6">
                 <div class="space-y-2">
-                    <label class="text-sm font-medium text-gray-700">Nome do Quadro</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nome do Quadro</label>
                     <input id="name" type="text" 
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
                         placeholder="Digite o nome do quadro" required>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-sm font-medium text-gray-700">Cor do Quadro</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Cor do Quadro</label>
                     <div class="flex gap-4 items-center">
                         <input id="color" type="color" 
-                            class="w-16 h-16 rounded-xl cursor-pointer" 
+                            class="w-16 h-16 rounded-xl cursor-pointer bg-white dark:bg-gray-800" 
                             value="#4F46E5">
                         <div class="flex-1 h-16 rounded-xl transition-all duration-300" id="color-preview" style="background: linear-gradient(145deg, #4F46E5, #4F46E599);"></div>
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-sm font-medium text-gray-700">Descrição</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
                     <textarea id="description" 
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
                         placeholder="Descreva o propósito do quadro" 
                         rows="3"></textarea>
                 </div>
@@ -118,9 +118,9 @@ function addNewColumnForm() {
         content: `
             <div class="space-y-4">
                 <div class="space-y-2">
-                    <label class="text-sm font-medium text-gray-700">Nome da Coluna</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nome da Coluna</label>
                     <input type="text" id="name" 
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
                         placeholder="Digite o nome da coluna" required>
                 </div>
             </div>
@@ -172,15 +172,15 @@ function addNewTaskForm(columnId) {
         content: `
             <div class="space-y-6">
                 <div class="space-y-2">
-                    <label class="text-sm font-medium text-gray-700">Título da Tarefa</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Título da Tarefa</label>
                     <input type="text" id="name" 
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
                         placeholder="Digite o título da tarefa" required>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-sm font-medium text-gray-700">Descrição</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
                     <textarea id="description" 
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
                         placeholder="Descreva os detalhes da tarefa" rows="3"></textarea>
                 </div>
             </div>
@@ -210,21 +210,21 @@ function editTaskForm(task) {
         content: `
             <div class="space-y-6">
                 <div class="space-y-2">
-                    <label class="text-sm font-medium text-gray-700">Título da Tarefa</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Título da Tarefa</label>
                     <input type="text" id="name" 
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
                         placeholder="Digite o título da tarefa" 
                         value="${task.title}" required>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-sm font-medium text-gray-700">Descrição</label>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
                     <textarea id="description" 
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
                         placeholder="Descreva os detalhes da tarefa" rows="3">${task.description || ''}</textarea>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input type="checkbox" id="isActive" class="w-4 h-4 text-blue-600 rounded" ${task.isActive ? 'checked' : ''}>
-                    <label class="text-sm font-medium text-gray-700">Tarefa ativa</label>
+                    <input type="checkbox" id="isActive" class="w-4 h-4 text-blue-600 rounded bg-white dark:bg-gray-800" ${task.isActive ? 'checked' : ''}>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Tarefa ativa</label>
                 </div>
             </div>
         `,
@@ -265,7 +265,7 @@ async function loadTasks(columnId) {
 
         if (!tasks || tasks.length === 0) {
             const emptyMessage = document.createElement("div");
-            emptyMessage.className = "flex flex-col items-center justify-center p-4 text-gray-400 text-sm";
+            emptyMessage.className = "flex flex-col items-center justify-center p-4 text-gray-400 dark:text-gray-500 text-sm";
             emptyMessage.innerHTML = `
                 <i class="fas fa-tasks mb-2"></i>
                 <p>Nenhuma tarefa</p>
