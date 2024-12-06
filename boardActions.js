@@ -3,6 +3,7 @@ import user from "./user.js";
 import Modal from './components/Modal.js';
 import Card from './components/Card.js';
 import AnimationService from './services/AnimationService.js';
+import Loading from './components/Loading.js';
 
 function backToBoardList() {
     window.location.href = 'index.html';
@@ -365,14 +366,30 @@ async function updateBoard(boardId, name, color, description, isActive) {
         throw new Error('Usuário não autenticado');
     }
 
-    await requests.UpdateBoard({
+    // Primeiro, busca a board atual para manter campos importantes
+    const currentBoard = await requests.GetBoardById(boardId);
+    
+    // Prepara os dados para atualização mantendo campos importantes
+    const boardData = {
         Id: parseInt(boardId),
-        Name: name,
-        Description: description || '',
+        Name: name.trim(),
+        Description: description ? description.trim() : '',
         HexaBackgroundCoor: color,
         IsActive: isActive,
+        CreatedBy: currentBoard.CreatedBy, // Mantém o criador original
         UpdatedBy: parseInt(userId)
-    });
+    };
+
+    console.log('Dados da board para atualização:', boardData);
+
+    try {
+        const response = await requests.UpdateBoard(boardData);
+        console.log('Resposta da atualização:', response);
+        return response;
+    } catch (error) {
+        console.error('Erro ao atualizar board:', error);
+        throw error;
+    }
 }
 
 function editBoardForm(board) {
@@ -390,8 +407,12 @@ function editBoardForm(board) {
                     <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nome do Quadro</label>
                     <input id="name" type="text" 
                         class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
-                        placeholder="Digite o nome do quadro" 
-                        value="${board.Name}" required>
+                        placeholder="Digite o nome do quadro (mínimo 10 caracteres)" 
+                        value="${board.Name}"
+                        minlength="10"
+                        maxlength="100"
+                        required>
+                    <p id="name-error" class="text-sm text-red-500 dark:text-red-400 hidden"></p>
                 </div>
                 <div class="space-y-2">
                     <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Cor do Quadro</label>
@@ -408,6 +429,7 @@ function editBoardForm(board) {
                     <textarea id="description" 
                         class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
                         placeholder="Descreva o propósito do quadro" 
+                        maxlength="500"
                         rows="3">${board.Description || ''}</textarea>
                 </div>
                 <div class="flex items-center gap-2">
@@ -427,15 +449,68 @@ function editBoardForm(board) {
             colorInput.addEventListener('input', (e) => {
                 colorPreview.style.background = `linear-gradient(145deg, ${e.target.value}, ${e.target.value}99)`;
             });
+
+            // Adiciona validação em tempo real
+            const nameInput = document.getElementById('name');
+            const nameError = document.getElementById('name-error');
+            
+            nameInput.addEventListener('input', (e) => {
+                const value = e.target.value.trim();
+                if (value.length === 0) {
+                    nameError.textContent = 'O nome do quadro é obrigatório';
+                    nameError.classList.remove('hidden');
+                    e.target.setCustomValidity('O nome do quadro é obrigatório');
+                } else if (value.length < 10) {
+                    nameError.textContent = 'O nome do quadro deve ter no mínimo 10 caracteres';
+                    nameError.classList.remove('hidden');
+                    e.target.setCustomValidity('O nome do quadro deve ter no mínimo 10 caracteres');
+                } else if (value.length > 100) {
+                    nameError.textContent = 'O nome do quadro deve ter no máximo 100 caracteres';
+                    nameError.classList.remove('hidden');
+                    e.target.setCustomValidity('O nome do quadro deve ter no máximo 100 caracteres');
+                } else {
+                    nameError.classList.add('hidden');
+                    e.target.setCustomValidity('');
+                }
+            });
         },
         onConfirm: async () => {
-            const name = document.getElementById('name').value;
+            const nameInput = document.getElementById('name');
+            const name = nameInput.value.trim();
             const color = document.getElementById('color').value;
-            const description = document.getElementById('description').value;
+            const description = document.getElementById('description').value.trim();
             const isActive = document.getElementById('isActive').checked;
 
-            await updateBoard(board.Id, name, color, description, isActive);
-            window.location.reload();
+            // Validação final antes de enviar
+            if (!name) {
+                nameInput.setCustomValidity('O nome do quadro é obrigatório');
+                nameInput.reportValidity();
+                return;
+            }
+
+            if (name.length < 10) {
+                nameInput.setCustomValidity('O nome do quadro deve ter no mínimo 10 caracteres');
+                nameInput.reportValidity();
+                return;
+            }
+
+            try {
+                const loadingElement = Loading.show({
+                    type: 'spinner',
+                    text: 'Salvando alterações...',
+                    size: 'md',
+                    color: 'blue'
+                });
+
+                await updateBoard(board.Id, name, color, description, isActive);
+                Loading.hide(loadingElement);
+                window.location.reload();
+            } catch (error) {
+                console.error('Erro ao atualizar quadro:', error);
+                const nameError = document.getElementById('name-error');
+                nameError.textContent = 'Erro ao atualizar o quadro. Por favor, verifique os dados e tente novamente.';
+                nameError.classList.remove('hidden');
+            }
         }
     });
 
