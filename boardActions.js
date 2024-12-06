@@ -4,6 +4,7 @@ import Modal from './components/Modal.js';
 import Card from './components/Card.js';
 import AnimationService from './services/AnimationService.js';
 import Loading from './components/Loading.js';
+import Task from './components/Task.js';
 
 function backToBoardList() {
     window.location.href = 'index.html';
@@ -338,21 +339,23 @@ async function loadTasks(columnId) {
             return;
         }
 
-        tasks.forEach((taskData, index) => {
+        const taskElements = tasks.map((taskData, index) => {
             const task = new Task({
                 id: taskData.Id,
                 title: taskData.Title,
                 description: taskData.Description,
                 isActive: taskData.IsActive,
                 columnId: columnId,
-                onEdit: (task) => editTaskForm(task),
+                onEdit: (task) => editTask(task),
                 onDelete: (taskId) => deleteTask(taskId, columnId),
                 onStatusChange: (taskId, isActive) => updateTaskStatus(taskId, isActive),
                 animationDelay: index * 0.05
             });
 
-            tasksContainer.appendChild(task.create());
+            return task.create();
         });
+
+        taskElements.forEach(element => tasksContainer.appendChild(element));
 
     } catch (error) {
         console.error('Erro ao carregar tasks:', error);
