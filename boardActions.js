@@ -14,12 +14,25 @@ async function addNewBoard(name, color, description) {
         throw new Error('Usuário não autenticado');
     }
 
-    await requests.CreateBoard({
-        Name: name,
-        Description: description || '',
+    const boardData = {
+        Name: name.trim(),
+        Description: description ? description.trim() : '',
         HexaBackgroundCoor: color,
-        CreatedBy: parseInt(userId)
-    });
+        IsActive: true,
+        CreatedBy: parseInt(userId),
+        UpdatedBy: parseInt(userId)
+    };
+
+    console.log('Dados do board a serem enviados:', boardData);
+
+    try {
+        const response = await requests.CreateBoard(boardData);
+        console.log('Resposta do servidor:', response);
+        return response;
+    } catch (error) {
+        console.error('Erro detalhado ao criar board:', error);
+        throw error;
+    }
 }
 
 function addNewBoardForm() {
@@ -37,7 +50,11 @@ function addNewBoardForm() {
                     <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nome do Quadro</label>
                     <input id="name" type="text" 
                         class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
-                        placeholder="Digite o nome do quadro" required>
+                        placeholder="Digite o nome do quadro (mínimo 10 caracteres)" 
+                        minlength="10"
+                        maxlength="100"
+                        required>
+                    <p id="name-error" class="text-sm text-red-500 dark:text-red-400 hidden"></p>
                 </div>
                 <div class="space-y-2">
                     <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Cor do Quadro</label>
@@ -53,6 +70,7 @@ function addNewBoardForm() {
                     <textarea id="description" 
                         class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
                         placeholder="Descreva o propósito do quadro" 
+                        maxlength="500"
                         rows="3"></textarea>
                 </div>
             </div>
@@ -66,14 +84,59 @@ function addNewBoardForm() {
             colorInput.addEventListener('input', (e) => {
                 colorPreview.style.background = `linear-gradient(145deg, ${e.target.value}, ${e.target.value}99)`;
             });
+
+            // Adiciona validação em tempo real
+            const nameInput = document.getElementById('name');
+            const nameError = document.getElementById('name-error');
+            
+            nameInput.addEventListener('input', (e) => {
+                const value = e.target.value.trim();
+                if (value.length === 0) {
+                    nameError.textContent = 'O nome do quadro é obrigatório';
+                    nameError.classList.remove('hidden');
+                    e.target.setCustomValidity('O nome do quadro é obrigatório');
+                } else if (value.length < 10) {
+                    nameError.textContent = 'O nome do quadro deve ter no mínimo 10 caracteres';
+                    nameError.classList.remove('hidden');
+                    e.target.setCustomValidity('O nome do quadro deve ter no mínimo 10 caracteres');
+                } else if (value.length > 100) {
+                    nameError.textContent = 'O nome do quadro deve ter no máximo 100 caracteres';
+                    nameError.classList.remove('hidden');
+                    e.target.setCustomValidity('O nome do quadro deve ter no máximo 100 caracteres');
+                } else {
+                    nameError.classList.add('hidden');
+                    e.target.setCustomValidity('');
+                }
+            });
         },
         onConfirm: async () => {
-            const name = document.getElementById('name').value;
+            const nameInput = document.getElementById('name');
+            const name = nameInput.value.trim();
             const color = document.getElementById('color').value;
-            const description = document.getElementById('description').value;
+            const description = document.getElementById('description').value.trim();
 
-            await addNewBoard(name, color, description);
-            window.location.reload();
+            // Validação final antes de enviar
+            if (!name) {
+                nameInput.setCustomValidity('O nome do quadro é obrigatório');
+                nameInput.reportValidity();
+                return;
+            }
+
+            if (name.length < 10) {
+                nameInput.setCustomValidity('O nome do quadro deve ter no mínimo 10 caracteres');
+                nameInput.reportValidity();
+                return;
+            }
+
+            try {
+                await addNewBoard(name, color, description);
+                window.location.reload();
+            } catch (error) {
+                console.error('Erro ao criar quadro:', error);
+                const nameError = document.getElementById('name-error');
+                nameError.textContent = 'Erro ao criar o quadro. Por favor, verifique os dados e tente novamente.';
+                nameError.classList.remove('hidden');
+            }
         }
     });
 
@@ -296,11 +359,96 @@ async function loadTasks(columnId) {
     }
 }
 
+async function updateBoard(boardId, name, color, description, isActive) {
+    const userId = user.Id;
+    if (!userId) {
+        throw new Error('Usuário não autenticado');
+    }
+
+    await requests.UpdateBoard({
+        Id: parseInt(boardId),
+        Name: name,
+        Description: description || '',
+        HexaBackgroundCoor: color,
+        IsActive: isActive,
+        UpdatedBy: parseInt(userId)
+    });
+}
+
+function editBoardForm(board) {
+    const modal = new Modal({
+        title: 'Editar Quadro',
+        icon: 'fa-edit',
+        iconColor: 'yellow',
+        size: 'md',
+        position: 'center',
+        animation: 'scale',
+        isForm: true,
+        content: `
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Nome do Quadro</label>
+                    <input id="name" type="text" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
+                        placeholder="Digite o nome do quadro" 
+                        value="${board.Name}" required>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Cor do Quadro</label>
+                    <div class="flex gap-4 items-center">
+                        <input id="color" type="color" 
+                            class="w-16 h-16 rounded-xl cursor-pointer bg-white dark:bg-gray-800" 
+                            value="${board.HexaBackgroundCoor || '#4F46E5'}">
+                        <div class="flex-1 h-16 rounded-xl transition-all duration-300" id="color-preview" 
+                            style="background: linear-gradient(145deg, ${board.HexaBackgroundCoor || '#4F46E5'}, ${board.HexaBackgroundCoor || '#4F46E5'}99);"></div>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
+                    <textarea id="description" 
+                        class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" 
+                        placeholder="Descreva o propósito do quadro" 
+                        rows="3">${board.Description || ''}</textarea>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="isActive" 
+                        class="w-4 h-4 text-blue-600 rounded bg-white dark:bg-gray-800" 
+                        ${board.IsActive ? 'checked' : ''}>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Quadro ativo</label>
+                </div>
+            </div>
+        `,
+        confirmText: 'Salvar Alterações',
+        cancelText: 'Cancelar',
+        onOpen: () => {
+            // Atualiza preview da cor quando o input muda
+            const colorInput = document.getElementById('color');
+            const colorPreview = document.getElementById('color-preview');
+            colorInput.addEventListener('input', (e) => {
+                colorPreview.style.background = `linear-gradient(145deg, ${e.target.value}, ${e.target.value}99)`;
+            });
+        },
+        onConfirm: async () => {
+            const name = document.getElementById('name').value;
+            const color = document.getElementById('color').value;
+            const description = document.getElementById('description').value;
+            const isActive = document.getElementById('isActive').checked;
+
+            await updateBoard(board.Id, name, color, description, isActive);
+            window.location.reload();
+        }
+    });
+
+    modal.create();
+    document.getElementById('name').focus();
+}
+
 export default {
     backToBoardList,
     addNewBoardForm,
     addNewColumnForm,
     addNewTaskForm,
     editTaskForm,
+    editBoardForm,
     loadTasks
 };

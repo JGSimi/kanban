@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    /* Transições suaves para mudança de tema */
+    html {
+        @apply transition-colors duration-300;
+    }
+
+    body {
+        @apply bg-gradient-to-br from-gray-50 dark:from-gray-900 
+               via-white dark:via-gray-800 
+               to-blue-50 dark:to-gray-900 
+               text-gray-900 dark:text-gray-100;
+    }
+}
+
+@layer components {
+    .btn {
+        @apply px-4 py-2 rounded-lg transition-all duration-300 ease-in-out;
+    }
+    
+    .btn-primary {
+        @apply bg-accent hover:bg-accent/90 text-white shadow-md 
+               hover:shadow-lg transform hover:-translate-y-0.5;
+    }
+
+    .card {
+        @apply bg-primary p-4 rounded-xl shadow-md transition-all duration-300 
+               hover:shadow-lg dark:bg-gray-800/90 dark:hover:bg-gray-800;
+    }
+
+    .input {
+        @apply w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600
+               focus:ring-2 focus:ring-accent focus:border-transparent outline-none 
+               transition-all duration-300 bg-white dark:bg-gray-700 
+               text-gray-900 dark:text-gray-100;
+    }
+
+    /* Estilo específico para o botão de tema */
+    #theme-toggle {
+        @apply relative p-2 rounded-xl bg-white/10 dark:bg-gray-800/50 
+               hover:bg-white/20 dark:hover:bg-gray-700/50 
+               focus:outline-none focus:ring-2 focus:ring-blue-500/50
+               transition-all duration-300 ease-out group overflow-hidden;
+    }
+
+    #theme-toggle .icon-container {
+        @apply relative z-10 transform transition-transform duration-500;
+    }
+
+    #theme-toggle .sun-icon {
+        @apply absolute inset-0 opacity-0 dark:opacity-100 
+               transform transition-all duration-500;
+    }
+
+    #theme-toggle .moon-icon {
+        @apply opacity-100 dark:opacity-0 transform transition-all duration-500;
+    }
+}
+
+/* Animações personalizadas */
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-slide-up {
+    animation: slideUp 0.5s var(--bounce) forwards;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+/* Variáveis CSS personalizadas */
+:root {
+    --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estilos para o modo escuro */
+.dark {
+    color-scheme: dark;
+} 

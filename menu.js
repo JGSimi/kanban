@@ -1,11 +1,6 @@
 import user from "./user.js";
 import requests from "./request.js";
 
-function toggleTheme() {
-    document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-}
-
 async function loadRecentProjects() {
     try {
         console.log('Carregando projetos recentes para o usuário:', user.Id);
@@ -78,9 +73,8 @@ function createMenu() {
                     </div>
                     <div class="flex items-center gap-2">
                         <button id="theme-toggle" 
-                            class="p-2 hover:bg-white/20 rounded-xl transition-colors duration-300 group">
-                            <i class="fas fa-sun text-yellow-300 dark:hidden"></i>
-                            <i class="fas fa-moon text-blue-300 hidden dark:block"></i>
+                            class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 group">
+                            <i class="fas fa-moon text-gray-600 dark:text-gray-400 text-lg transform transition-all duration-500 group-hover:rotate-12"></i>
                         </button>
                         <button id="close-menu" class="p-2 hover:bg-white/20 rounded-xl transition-all duration-300 transform hover:rotate-90">
                             <i class="fas fa-times text-lg"></i>
@@ -159,7 +153,7 @@ function createMenu() {
     
     closeButton.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', toggleMenu);
-    themeToggle.addEventListener('click', toggleTheme);
+    themeToggle.addEventListener('click', () => window.themeService.toggle());
     logoutButton.addEventListener('click', () => {
         if (confirm('Tem certeza que deseja sair?')) {
             user.clear();
@@ -211,6 +205,5 @@ document.addEventListener('DOMContentLoaded', createMenu);
 
 export default {
     toggleMenu,
-    logout,
-    toggleTheme
+    logout
 };

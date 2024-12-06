@@ -18,6 +18,13 @@ async function verifyUser() {
 
 async function loadBoards() {
     try {
+        // Verificar se o usuário está logado
+        if (!user.Id) {
+            console.error('Usuário não está logado');
+            window.location.href = 'login.html';
+            return;
+        }
+
         // Mostrar loading
         const loadingElement = Loading.show({
             type: 'spinner',
@@ -31,13 +38,24 @@ async function loadBoards() {
         console.log('Boards recebidas:', boards);
 
         // Filtra as boards do usuário atual
+        const userId = parseInt(user.Id);
         const userBoards = boards.filter(board => {
-            const boardUserId = board.CreatedBy;
-            const userId = parseInt(user.Id);
-            return boardUserId === userId;
+            // Garante que os IDs são números para comparação
+            const boardUserId = parseInt(board.CreatedBy);
+            const isOwner = boardUserId === userId;
+            
+            console.log('Comparando board:', {
+                boardId: board.Id,
+                boardName: board.Name,
+                boardUserId,
+                userId,
+                isOwner
+            });
+            
+            return isOwner;
         });
 
-        console.log('Boards do usuário:', userBoards);
+        console.log(`Encontradas ${userBoards.length} boards para o usuário ${userId}`);
 
         const boardsContainer = document.getElementById('boards');
         const emptyStateContainer = document.getElementById('empty-state');
@@ -71,21 +89,24 @@ async function loadBoards() {
         boardsContainer.style.display = 'contents';
         boardsContainer.innerHTML = '';
 
-        userBoards.forEach((board, index) => {
-            const card = new Card({
-                title: board.Name,
-                description: board.Description,
-                backgroundColor: board.HexaBackgroundCoor || '#4F46E5',
-                icon: 'fa-clipboard-list',
-                onEdit: () => editBoard(board),
-                onDelete: () => deleteBoard(board.Id),
-                onClick: () => window.location.href = `board.html?id=${board.Id}`,
-                animationDelay: index * 0.05,
-                draggable: true
-            });
+        // Ordena as boards por data de criação (mais recentes primeiro)
+        userBoards
+            .sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt))
+            .forEach((board, index) => {
+                const card = new Card({
+                    title: board.Name,
+                    description: board.Description,
+                    backgroundColor: board.HexaBackgroundCoor || '#4F46E5',
+                    icon: 'fa-clipboard-list',
+                    onEdit: () => boardActions.editBoardForm(board),
+                    onDelete: () => deleteBoard(board.Id),
+                    onClick: () => window.location.href = `board.html?id=${board.Id}`,
+                    animationDelay: index * 0.05,
+                    draggable: true
+                });
 
-            boardsContainer.appendChild(card.create());
-        });
+                boardsContainer.appendChild(card.create());
+            });
 
         // Inicializa o serviço de drag and drop
         if (dragAndDrop) {
@@ -187,14 +208,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', async () => {
-            await ThemeService.toggle();
+            await window.themeService.toggle();
         });
     }
 
     // Carrega preferência do usuário quando fizer login
     document.addEventListener('userLoggedIn', async (event) => {
         const userId = event.detail.userId;
-        await ThemeService.loadUserPreference(userId);
+        await window.themeService.loadUserPreference(userId);
     });
 });
 

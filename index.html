@@ -4,9 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskEasy</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Prevenir flash de tema incorreto -->
+    <script>
+        // Verificar e aplicar tema imediatamente
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const shouldBeDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+        
+        // Aplicar tema inicial
+        if (shouldBeDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        // Salvar tema inicial se não existir
+        if (!savedTheme) {
+            localStorage.setItem('theme', shouldBeDark ? 'dark' : 'light');
+        }
+        
+        console.log('Tema inicial aplicado:', shouldBeDark ? 'dark' : 'light');
+    </script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="/dist/output.css" rel="stylesheet">
+    
+    <!-- Tailwind após a definição inicial do tema -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Inicialização do ThemeService -->
+    <script type="module">
+        import ThemeService from './services/ThemeService.js';
+        
+        // Criar e disponibilizar o serviço globalmente
+        if (!window.themeService) {
+            window.themeService = new ThemeService();
+            
+            // Inicializar quando o DOM estiver pronto
+            document.addEventListener('DOMContentLoaded', () => {
+                window.themeService.init();
+                
+                // Carregar preferência do usuário se estiver logado
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (user?.Id) {
+                    window.themeService.loadUserPreference(user.Id);
+                }
+            });
+        }
+    </script>
+    
+    <!-- Scripts da aplicação -->
     <script type="module" src="menu.js"></script>
+    <script type="module" src="index.js"></script>
+    
     <style>
         /* Estilização da Scrollbar */
         ::-webkit-scrollbar {
@@ -141,21 +192,21 @@
         }
     </script>
 </head>
-<body class="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 dark:from-gray-900 via-white dark:via-gray-800 to-blue-50 dark:to-gray-900 custom-scroll">
+<body class="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 dark:from-gray-900 via-white dark:via-gray-800 to-blue-50 dark:to-gray-900 custom-scroll text-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Header -->
-    <header class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg sticky top-0 z-40">
+    <header class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg sticky top-0 z-40 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
             <div class="flex justify-between items-center w-full">
                 <div class="flex items-center gap-4 mx-4">
                     <h1 class="text-4xl font-bold animate-slide-down flex items-center gap-3">
-                        <span class="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600 text-transparent bg-clip-text">
+                        <span class="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600 text-transparent bg-clip-text transition-all duration-300">
                             Meus Projetos
                         </span>
                     </h1>
                 </div>
                 <div class="flex items-center gap-4">
                     <button id="add-board-button" 
-                        class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300 shadow-md flex items-center gap-3 group">
+                        class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md flex items-center gap-3 group">
                         <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
                             <i class="fas fa-plus transform group-hover:rotate-90 transition-transform duration-300"></i>
                         </div>
@@ -169,12 +220,12 @@
     <!-- Main Content -->
     <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 custom-scroll">
         <!-- Search and Filter Section -->
-        <div class="mb-8 flex gap-4 items-center bg-white/50 dark:bg-gray-800/50 p-4 rounded-2xl backdrop-blur-sm shadow-sm">
+        <div class="mb-8 flex gap-4 items-center bg-white/50 dark:bg-gray-800/50 p-4 rounded-2xl backdrop-blur-sm shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-300">
             <div class="relative flex-1">
                 <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
                 <input type="text" 
                     placeholder="Buscar projetos..." 
-                    class="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-300 bg-white/80 dark:bg-gray-700/80 text-gray-900 dark:text-gray-100">
+                    class="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-300 bg-white/80 dark:bg-gray-700/80 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400">
             </div>
             <select class="px-6 py-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 transition-all duration-300 bg-white/80 dark:bg-gray-700/80 text-gray-900 dark:text-gray-100">
                 <option value="all">Todos os Projetos</option>
@@ -193,7 +244,5 @@
         <!-- Empty State Container -->
         <div id="empty-state" class="hidden"></div>
     </main>
-
-    <script type="module" src="index.js"></script>
 </body>
 </html>
